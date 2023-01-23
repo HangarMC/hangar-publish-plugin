@@ -19,7 +19,8 @@ class HangarPublishPlugin : Plugin<Project> {
         val ext = project.extensions.create<HangarPublishExtension>("hangarPublish")
 
         ext.publications.all {
-            apiKey.convention(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key"))
+            apiKey.convention(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key")
+                .orElse(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key")))
             apiEndpoint.convention("http://localhost:3333/api/v1/") // todo
 
             project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
