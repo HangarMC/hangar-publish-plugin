@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-gradle-plugin`
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
@@ -56,4 +58,20 @@ gradlePlugin.testSourceSets(sourceSets["functionalTest"])
 tasks.named<Task>("check") {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))
+}
+
+// also sets java toolchain
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+tasks.withType<JavaCompile> {
+    options.release.set(8)
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += "-Xjdk-release=1.8"
 }

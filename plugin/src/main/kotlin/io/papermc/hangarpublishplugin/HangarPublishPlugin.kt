@@ -8,5 +8,6 @@ import org.gradle.api.Project
 
 class HangarPublishPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        JavaClass::class.java
     }
 }
