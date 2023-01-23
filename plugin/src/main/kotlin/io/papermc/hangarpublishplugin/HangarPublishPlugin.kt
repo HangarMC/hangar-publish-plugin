@@ -5,9 +5,23 @@ package io.papermc.hangarpublishplugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.register
 
 class HangarPublishPlugin : Plugin<Project> {
+    companion object {
+        const val TASK_GROUP = "Hangar Publication"
+    }
+
     override fun apply(project: Project) {
-        JavaClass::class.java
+        val ext = project.extensions.create<HangarPublishExtension>("hangarPublish")
+
+        ext.publications.all {
+            project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
+                group = TASK_GROUP
+                description = "Publishes the '${this@all.name}' publication to Hangar."
+                publication.set(this@all)
+            }
+        }
     }
 }

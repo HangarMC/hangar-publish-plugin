@@ -2,9 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-gradle-plugin`
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    `kotlin-dsl`
+    id("com.gradle.plugin-publish") version "1.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
+
+group = "io.papermc"
+version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -47,7 +51,7 @@ testing {
 }
 
 gradlePlugin {
-    plugins.creating {
+    val plugin by plugins.creating {
         id = "io.papermc.hangar-publish-plugin"
         implementationClass = "io.papermc.hangarpublishplugin.HangarPublishPlugin"
     }
