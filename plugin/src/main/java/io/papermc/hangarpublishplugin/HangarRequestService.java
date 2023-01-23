@@ -43,7 +43,7 @@ public final class HangarRequestService {
             }
 
             // Finalize the request
-            final String namespace = publication.getAuthor().get() + "/" + publication.getSlug().get();
+            final String namespace = publication.getOwner().get() + "/" + publication.getSlug().get();
             final HttpPost post = new HttpPost(publication.getApiEndpoint().get() + "projects/" + namespace + "/upload");
             post.setEntity(builder.build());
             this.addAuthorizationHeader(publication.getApiEndpoint().get(), publication.getApiKey().get(), client, post);

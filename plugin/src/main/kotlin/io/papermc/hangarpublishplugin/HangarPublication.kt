@@ -2,8 +2,10 @@ package io.papermc.hangarpublishplugin
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
@@ -11,19 +13,19 @@ import org.gradle.api.tasks.Optional
 
 interface HangarPublication {
     @get:Input
-    val name: String
-
-    @get:Input
     val apiEndpoint: Property<String>
 
     @get:Input
-    val author: Property<String>
+    val apiKey: Property<String>
+
+    @get:Input
+    val owner: Property<String>
+
+    @get:Input
+    val name: String
 
     @get:Input
     val slug: Property<String>
-
-    @get:Input
-    val apiKey: Property<String>
 
     @get:Input
     val version: Property<String>
@@ -70,9 +72,23 @@ interface HangarPublication {
         @get:Input
         val required: Property<Boolean>
 
-        @get:Input
+        @get:Nested
         @get:Optional
         val hangarNamespace: Property<HangarProjectNamespace>
+
+        fun Project.hangarNamespace(owner: Provider<String>, slug: Provider<String>) {
+            val ns = objects.newInstance(HangarProjectNamespace::class.java)
+            ns.owner.set(owner)
+            ns.slug.set(slug)
+            hangarNamespace.set(ns)
+        }
+
+        fun Project.hangarNamespace(owner: String, slug: String) {
+            val ns = objects.newInstance(HangarProjectNamespace::class.java)
+            ns.owner.set(owner)
+            ns.slug.set(slug)
+            hangarNamespace.set(ns)
+        }
 
         @get:Input
         @get:Optional

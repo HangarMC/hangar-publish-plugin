@@ -1,10 +1,10 @@
 package io.papermc.hangarpublishplugin;
 
-public final class HangarProjectNamespace {
+public final class HangarProjectNamespaceSerializable {
     private final String owner;
     private final String slug;
 
-    public HangarProjectNamespace(final String owner, final String slug) {
+    public HangarProjectNamespaceSerializable(final String owner, final String slug) {
         this.owner = owner;
         this.slug = slug;
     }

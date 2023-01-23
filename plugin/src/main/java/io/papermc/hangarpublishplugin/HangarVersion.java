@@ -3,13 +3,12 @@ package io.papermc.hangarpublishplugin;
 import io.papermc.hangarpublishplugin.HangarPublication.DependencyDetails;
 import io.papermc.hangarpublishplugin.HangarPublication.Platform;
 import io.papermc.hangarpublishplugin.HangarPublication.PlatformDetails;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.Nullable;
 
 final class HangarVersion {
     private final String version;
@@ -84,10 +83,10 @@ final class HangarVersion {
     static final class PluginDependency {
         private final String name;
         private final boolean required;
-        private final HangarProjectNamespace namespace;
+        private final HangarProjectNamespaceSerializable namespace;
         private final String externalUrl;
 
-        private PluginDependency(final String name, final boolean required, @Nullable final HangarProjectNamespace namespace, @Nullable final String externalUrl) {
+        private PluginDependency(final String name, final boolean required, @Nullable final HangarProjectNamespaceSerializable namespace, @Nullable final String externalUrl) {
             if (namespace == null && externalUrl == null) {
                 throw new IllegalArgumentException("Either a Hangar namespace or an external url needs to be defined");
             }
@@ -99,12 +98,14 @@ final class HangarVersion {
 
         public static PluginDependency fromDependencyDetails(final DependencyDetails dependencyDetails) {
             if (dependencyDetails.getHangarNamespace().isPresent()) {
-                return PluginDependency.createWithHangarNamespace(dependencyDetails.getName(), dependencyDetails.getRequired().get(), dependencyDetails.getHangarNamespace().get());
+                final HangarProjectNamespace ns = dependencyDetails.getHangarNamespace().get();
+                final HangarProjectNamespaceSerializable namespace = new HangarProjectNamespaceSerializable(ns.getOwner().get(), ns.getSlug().get());
+                return PluginDependency.createWithHangarNamespace(dependencyDetails.getName(), dependencyDetails.getRequired().get(), namespace);
             }
             return PluginDependency.createWithUrl(dependencyDetails.getName(), dependencyDetails.getRequired().get(), dependencyDetails.getUrl().get());
         }
 
-        public static PluginDependency createWithHangarNamespace(final String name, final boolean required, final HangarProjectNamespace namespace) {
+        public static PluginDependency createWithHangarNamespace(final String name, final boolean required, final HangarProjectNamespaceSerializable namespace) {
             return new PluginDependency(name, required, namespace, null);
         }
 
@@ -121,7 +122,7 @@ final class HangarVersion {
         }
 
         @Nullable
-        public HangarProjectNamespace namespace() {
+        public HangarProjectNamespaceSerializable namespace() {
             return namespace;
         }
 
