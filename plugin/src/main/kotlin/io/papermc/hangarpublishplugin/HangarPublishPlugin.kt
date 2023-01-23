@@ -14,6 +14,8 @@ class HangarPublishPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        val authService = project.gradle.sharedServices.registerIfAbsent("hangar-auth", HangarAuthService::class.java) {}
+
         val ext = project.extensions.create<HangarPublishExtension>("hangarPublish")
 
         ext.publications.all {
@@ -22,6 +24,7 @@ class HangarPublishPlugin : Plugin<Project> {
             project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
+                auth.set(authService)
                 publication.set(this@all)
             }
         }
