@@ -69,18 +69,17 @@ tasks.named<Task>("check") {
     dependsOn(testing.suites.named("functionalTest"))
 }
 
-// also sets java toolchain
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
 tasks.withType<JavaCompile> {
-    options.release.set(8)
+    // options.release.set(8)
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-Xjdk-release=1.8"
+    // kotlinOptions.freeCompilerArgs += "-Xjdk-release=1.8"
 }

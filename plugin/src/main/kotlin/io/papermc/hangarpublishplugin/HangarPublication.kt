@@ -4,6 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -55,10 +56,14 @@ interface HangarPublication {
         val platform: Property<Platform>
 
         @get:Input
-        val platformVersions: List<String>
+        val platformVersions: ListProperty<String>
 
         @get:Nested
         val dependencies: NamedDomainObjectContainer<DependencyDetails>
+
+        fun dependency(op: Action<DependencyDetails>) {
+            dependencies.register(dependencies.size.toString(), op)
+        }
 
         @get:InputFile
         @get:Optional

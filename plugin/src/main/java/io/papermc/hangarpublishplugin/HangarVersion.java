@@ -41,8 +41,8 @@ final class HangarVersion {
             platform -> platform.getDependencies().getAsMap().values().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
         ));
         final Map<Platform, List<String>> platformDependencies = platforms.stream().collect(Collectors.toMap(
-            platform -> platform.getPlatform().get(),
-            PlatformDetails::getPlatformVersions
+            details -> details.getPlatform().get(),
+            details -> details.getPlatformVersions().get()
         ));
         // TODO: Check if the file for different platforms is the same and collect them in the same FileData
         final List<FileData> fileData = platforms.stream().map(platform -> new FileData(Arrays.asList(platform.getPlatform().get()))).collect(Collectors.toList());
