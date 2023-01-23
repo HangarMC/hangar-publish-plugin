@@ -14,7 +14,6 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.ConcurrentHashMap
 
 abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
     companion object {
@@ -22,7 +21,7 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
         val LOGGER: Logger = Logging.getLogger(HangarAuthService::class.java)
     }
 
-    private val cache: MutableMap<String, HangarAuthorizationToken> = ConcurrentHashMap()
+    private val cache: MutableMap<String, HangarAuthorizationToken> = HashMap()
 
     @Throws(IOException::class)
     @Synchronized
