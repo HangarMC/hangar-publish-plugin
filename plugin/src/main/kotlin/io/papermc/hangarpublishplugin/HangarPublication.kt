@@ -2,8 +2,8 @@ package io.papermc.hangarpublishplugin
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
+import javax.inject.Inject
 
 interface HangarPublication {
     @get:Input
@@ -71,6 +72,9 @@ interface HangarPublication {
     }
 
     interface DependencyDetails {
+        @get:Inject
+        val objects: ObjectFactory
+
         @get:Input
         val name: String
 
@@ -81,23 +85,23 @@ interface HangarPublication {
         @get:Optional
         val hangarNamespace: Property<HangarProjectNamespace>
 
-        fun Project.hangarNamespace(owner: Provider<String>, slug: Provider<String>) {
-            val ns = objects.newInstance(HangarProjectNamespace::class.java)
-            ns.owner.set(owner)
-            ns.slug.set(slug)
-            hangarNamespace.set(ns)
-        }
-
-        fun Project.hangarNamespace(owner: String, slug: String) {
-            val ns = objects.newInstance(HangarProjectNamespace::class.java)
-            ns.owner.set(owner)
-            ns.slug.set(slug)
-            hangarNamespace.set(ns)
-        }
-
         @get:Input
         @get:Optional
         val url: Property<String>
+
+        fun hangarNamespace(owner: Provider<String>, slug: Provider<String>) {
+            val ns = objects.newInstance(HangarProjectNamespace::class.java)
+            ns.owner.set(owner)
+            ns.slug.set(slug)
+            hangarNamespace.set(ns)
+        }
+
+        fun hangarNamespace(owner: String, slug: String) {
+            val ns = objects.newInstance(HangarProjectNamespace::class.java)
+            ns.owner.set(owner)
+            ns.slug.set(slug)
+            hangarNamespace.set(ns)
+        }
     }
 
     // todo don't use enum

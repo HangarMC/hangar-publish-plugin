@@ -13,14 +13,6 @@ abstract class HangarPublishTask : DefaultTask() {
     @get:Nested
     abstract val publication: Property<HangarPublication>
 
-    init {
-        init()
-    }
-
-    private fun init() {
-        usesService(auth)
-    }
-
     @TaskAction
     fun run() {
         val publication: HangarPublication = publication.get()

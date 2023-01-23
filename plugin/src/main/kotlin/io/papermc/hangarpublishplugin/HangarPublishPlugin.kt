@@ -26,6 +26,7 @@ class HangarPublishPlugin : Plugin<Project> {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
                 auth.set(authService)
+                usesService(authService)
                 publication.set(this@all)
             }
         }
