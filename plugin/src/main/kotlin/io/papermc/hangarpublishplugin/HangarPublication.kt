@@ -7,10 +7,14 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 
 interface HangarPublication {
     @get:Input
     val name: String
+
+    @get:Input
+    val changelogs: Property<String>
 
     @get:Input
     val apiEndpoint: Property<String>
@@ -47,8 +51,31 @@ interface HangarPublication {
         @get:Input
         val platform: Property<Platform>
 
+        @get:Input
+        val platformVersions: List<String>
+
+        @get:Input
+        val dependencies: NamedDomainObjectContainer<DependencyDetails>
+
         @get:InputFile
+        @get:Optional
         val jar: RegularFileProperty
+    }
+
+    interface DependencyDetails {
+        @get:Input
+        val name: String
+
+        @get:Input
+        val required: Property<Boolean>
+
+        @get:Input
+        @get:Optional
+        val hangarNamespace: Property<HangarProjectNamespace>
+
+        @get:Input
+        @get:Optional
+        val url: Property<String>
     }
 
     // todo don't use enum
