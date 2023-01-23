@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
     companion object {
-        val GSON: Gson = Gson();
+        val GSON: Gson = Gson()
         val LOGGER: Logger = Logging.getLogger(HangarAuthService::class.java)
     }
 
@@ -39,20 +39,23 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
 
     @Throws(IOException::class)
     private fun fetchJwt0(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken? {
-        return client.execute(HttpPost(apiEndpoint + "authenticate?apiKey=" + apiKey), HttpClientResponseHandler { response: ClassicHttpResponse ->
-            println(response.code)
-            if (response.code == 400) {
-                LOGGER.error("Bad JWT request; is the API key correct?")
-                return@HttpClientResponseHandler null
-            } else if (response.code != 200) {
-                LOGGER.error("Error requesting JWT {}: {}", response.code, response.reasonPhrase)
-                return@HttpClientResponseHandler null
+        return client.execute(
+            HttpPost(apiEndpoint + "authenticate?apiKey=" + apiKey),
+            HttpClientResponseHandler { response: ClassicHttpResponse ->
+                println(response.code)
+                if (response.code == 400) {
+                    LOGGER.error("Bad JWT request; is the API key correct?")
+                    return@HttpClientResponseHandler null
+                } else if (response.code != 200) {
+                    LOGGER.error("Error requesting JWT {}: {}", response.code, response.reasonPhrase)
+                    return@HttpClientResponseHandler null
+                }
+                val json = EntityUtils.toString(response.entity, StandardCharsets.UTF_8)
+                val obj = GSON.fromJson(json, JsonObject::class.java)
+                val token = obj.getAsJsonPrimitive("token").asString
+                val expiresIn = obj.getAsJsonPrimitive("expiresIn").asLong
+                HangarAuthorizationToken(token, System.currentTimeMillis() + expiresIn)
             }
-            val json = EntityUtils.toString(response.entity, StandardCharsets.UTF_8)
-            val obj = GSON.fromJson(json, JsonObject::class.java)
-            val token = obj.getAsJsonPrimitive("token").asString
-            val expiresIn = obj.getAsJsonPrimitive("expiresIn").asLong
-            HangarAuthorizationToken(token, System.currentTimeMillis() + expiresIn)
-        })
+        )
     }
 }

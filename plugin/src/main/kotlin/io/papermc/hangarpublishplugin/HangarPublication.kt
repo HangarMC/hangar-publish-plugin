@@ -13,7 +13,6 @@ interface HangarPublication {
     @get:Input
     val name: String
 
-
     @get:Input
     val apiEndpoint: Property<String>
 
