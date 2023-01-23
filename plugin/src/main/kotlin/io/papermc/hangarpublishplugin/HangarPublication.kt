@@ -19,6 +19,9 @@ interface HangarPublication {
     val slug: Property<String>
 
     @get:Input
+    val apiKey: Property<String>
+
+    @get:Input
     val version: Property<String>
 
     @get:Input

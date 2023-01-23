@@ -17,6 +17,8 @@ class HangarPublishPlugin : Plugin<Project> {
         val ext = project.extensions.create<HangarPublishExtension>("hangarPublish")
 
         ext.publications.all {
+            apiKey.convention(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key"))
+
             project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
