@@ -13,8 +13,6 @@ interface HangarPublication {
     @get:Input
     val name: String
 
-    @get:Input
-    val changelogs: Property<String>
 
     @get:Input
     val apiEndpoint: Property<String>
@@ -33,6 +31,10 @@ interface HangarPublication {
 
     @get:Input
     val channel: Property<String>
+
+    @get:Input
+    @get:Optional
+    val changelog: Property<String>
 
     @get:Nested
     val platforms: NamedDomainObjectContainer<PlatformDetails>
@@ -54,7 +56,7 @@ interface HangarPublication {
         @get:Input
         val platformVersions: List<String>
 
-        @get:Input
+        @get:Nested
         val dependencies: NamedDomainObjectContainer<DependencyDetails>
 
         @get:InputFile

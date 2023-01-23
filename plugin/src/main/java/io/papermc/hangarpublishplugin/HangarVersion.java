@@ -20,9 +20,12 @@ final class HangarVersion {
     private final String channel;
 
     private HangarVersion(
-        final String version, final Map<Platform, List<PluginDependency>> pluginDependencies,
-        final Map<Platform, List<String>> platformDependencies, final String description,
-        final List<FileData> files, final String channel
+        final String version,
+        final Map<Platform, List<PluginDependency>> pluginDependencies,
+        final Map<Platform, List<String>> platformDependencies,
+        final String description,
+        final List<FileData> files,
+        final String channel
     ) {
         this.version = version;
         this.pluginDependencies = pluginDependencies;
@@ -48,7 +51,7 @@ final class HangarVersion {
             publication.getVersion().get(),
             pluginDependencies,
             platformDependencies,
-            publication.getChangelogs().get(),
+            publication.getChangelog().getOrNull(),
             fileData,
             publication.getChannel().get()
         );

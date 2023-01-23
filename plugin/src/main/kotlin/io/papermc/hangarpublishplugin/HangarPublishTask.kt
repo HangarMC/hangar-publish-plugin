@@ -24,5 +24,6 @@ abstract class HangarPublishTask : DefaultTask() {
     @TaskAction
     fun run() {
         val publication: HangarPublication = publication.get()
+        HangarRequestService(auth.get()).uploadVersion(publication)
     }
 }
