@@ -13,6 +13,9 @@ interface HangarPublication {
     val name: String
 
     @get:Input
+    val apiEndpoint: Property<String>
+
+    @get:Input
     val author: Property<String>
 
     @get:Input

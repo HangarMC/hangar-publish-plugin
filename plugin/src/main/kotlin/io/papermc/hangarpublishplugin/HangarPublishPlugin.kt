@@ -20,6 +20,7 @@ class HangarPublishPlugin : Plugin<Project> {
 
         ext.publications.all {
             apiKey.convention(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key"))
+            apiEndpoint.convention("http://localhost:3333/api/v1/") // todo
 
             project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
                 group = TASK_GROUP
