@@ -115,20 +115,28 @@ interface HangarPublication {
         }
     }
 
-    interface DependencyDetails {
+    abstract class DependencyDetails {
         @get:Input
-        val name: String
+        abstract val name: String
 
         @get:Input
-        val required: Property<Boolean>
+        abstract val required: Property<Boolean>
 
         @get:Nested
         @get:Optional
-        val hangarNamespace: Property<HangarProjectNamespace>
+        abstract val hangarNamespace: Property<HangarProjectNamespace>
 
         @get:Input
         @get:Optional
-        val url: Property<String>
+        abstract val url: Property<String>
+
+        init {
+            init()
+        }
+
+        private fun init() {
+            required.convention(true)
+        }
     }
 
     // todo don't use enum
