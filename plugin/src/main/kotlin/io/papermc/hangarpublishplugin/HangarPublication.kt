@@ -7,6 +7,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
@@ -50,6 +51,12 @@ interface HangarPublication {
     }
 
     interface PlatformDetails {
+        @get:Inject
+        val objects: ObjectFactory
+
+        @get:Inject
+        val providers: ProviderFactory
+
         @get:Input
         val name: String
 
@@ -59,22 +66,56 @@ interface HangarPublication {
         @get:Input
         val platformVersions: ListProperty<String>
 
-        @get:Nested
-        val dependencies: NamedDomainObjectContainer<DependencyDetails>
-
-        fun dependency(op: Action<DependencyDetails>) {
-            dependencies.register(dependencies.size.toString(), op)
-        }
-
         @get:InputFile
         @get:Optional
         val jar: RegularFileProperty
+
+        @get:Nested
+        val dependencies: NamedDomainObjectContainer<DependencyDetails>
+
+        fun urlDependency(url: String) {
+            urlDependency(url) {}
+        }
+
+        fun urlDependency(url: String, op: Action<DependencyDetails>) {
+            urlDependency(providers.provider { url }, op)
+        }
+
+        fun urlDependency(url: Provider<String>) {
+            urlDependency(url) {}
+        }
+
+        fun urlDependency(url: Provider<String>, op: Action<DependencyDetails>) {
+            dependencies.register(dependencies.size.toString()) {
+                this.url.set(url)
+                op.execute(this)
+            }
+        }
+
+        fun hangarDependency(owner: String, slug: String) {
+            hangarDependency(owner, slug) {}
+        }
+
+        fun hangarDependency(owner: String, slug: String, op: Action<DependencyDetails>) {
+            hangarDependency(providers.provider { owner }, providers.provider { slug }, op)
+        }
+
+        fun hangarDependency(owner: Provider<String>, slug: Provider<String>) {
+            hangarDependency(owner, slug) {}
+        }
+
+        fun hangarDependency(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails>) {
+            dependencies.register(dependencies.size.toString()) {
+                val ns = objects.newInstance(HangarProjectNamespace::class.java)
+                ns.owner.set(owner)
+                ns.slug.set(slug)
+                hangarNamespace.set(ns)
+                op.execute(this)
+            }
+        }
     }
 
     interface DependencyDetails {
-        @get:Inject
-        val objects: ObjectFactory
-
         @get:Input
         val name: String
 
@@ -88,20 +129,6 @@ interface HangarPublication {
         @get:Input
         @get:Optional
         val url: Property<String>
-
-        fun hangarNamespace(owner: Provider<String>, slug: Provider<String>) {
-            val ns = objects.newInstance(HangarProjectNamespace::class.java)
-            ns.owner.set(owner)
-            ns.slug.set(slug)
-            hangarNamespace.set(ns)
-        }
-
-        fun hangarNamespace(owner: String, slug: String) {
-            val ns = objects.newInstance(HangarProjectNamespace::class.java)
-            ns.owner.set(owner)
-            ns.slug.set(slug)
-            hangarNamespace.set(ns)
-        }
     }
 
     // todo don't use enum
