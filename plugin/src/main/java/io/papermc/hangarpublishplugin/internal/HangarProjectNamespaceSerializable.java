@@ -1,4 +1,4 @@
-package io.papermc.hangarpublishplugin;
+package io.papermc.hangarpublishplugin.internal;
 
 public final class HangarProjectNamespaceSerializable {
     private final String owner;

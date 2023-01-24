@@ -1,13 +1,14 @@
-package io.papermc.hangarpublishplugin;
+package io.papermc.hangarpublishplugin.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.papermc.hangarpublishplugin.HangarAuthService;
+import io.papermc.hangarpublishplugin.HangarPublication;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.FileBody;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -15,18 +16,17 @@ import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 
-public final class HangarRequestService {
+public final class HangarVersionPublisher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HangarRequestService.class);
+    private static final Logger LOGGER = Logging.getLogger(HangarVersionPublisher.class);
     private static final Gson GSON = new GsonBuilder().create();
 
     private final HangarAuthService auth;
 
-    public HangarRequestService(final HangarAuthService auth) {
+    public HangarVersionPublisher(final HangarAuthService auth) {
         this.auth = auth;
     }
 
@@ -52,7 +52,10 @@ public final class HangarRequestService {
             final String namespace = publication.getOwner().get() + "/" + publication.getSlug().get();
             final HttpPost post = new HttpPost(publication.getApiEndpoint().get() + "projects/" + namespace + "/upload");
             post.setEntity(builder.build());
-            this.addAuthorizationHeader(publication.getApiEndpoint().get(), publication.getApiKey().get(), client, post);
+
+            // Authorize
+            final HangarAuthorizationToken jwt = this.auth.jwt(client, publication.getApiEndpoint().get(), publication.getApiKey().get());
+            post.addHeader("Authorization", jwt.getJwt());
 
             final boolean success = client.execute(post, response -> {
                 if (response.getCode() != 200) {
@@ -66,15 +69,5 @@ public final class HangarRequestService {
                 throw new RuntimeException("Error uploading version");
             }
         }
-    }
-
-    private void addAuthorizationHeader(
-        final String apiEndpoint,
-        final String apiKey,
-        final HttpClient client,
-        final HttpMessage message
-    ) throws IOException {
-        final HangarAuthorizationToken jwt = this.auth.jwt(client, apiEndpoint, apiKey);
-        message.addHeader("Authorization", jwt.jwt());
     }
 }

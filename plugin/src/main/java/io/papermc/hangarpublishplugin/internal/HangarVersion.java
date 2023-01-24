@@ -1,5 +1,7 @@
-package io.papermc.hangarpublishplugin;
+package io.papermc.hangarpublishplugin.internal;
 
+import io.papermc.hangarpublishplugin.HangarProjectNamespace;
+import io.papermc.hangarpublishplugin.HangarPublication;
 import io.papermc.hangarpublishplugin.HangarPublication.DependencyDetails;
 import io.papermc.hangarpublishplugin.HangarPublication.PlatformDetails;
 import java.util.Arrays;

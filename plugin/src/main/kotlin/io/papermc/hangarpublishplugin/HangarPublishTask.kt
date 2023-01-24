@@ -1,11 +1,15 @@
 package io.papermc.hangarpublishplugin
 
+import io.papermc.hangarpublishplugin.internal.HangarVersionPublisher
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 
+/**
+ * Task that publishes a [HangarPublication].
+ */
 abstract class HangarPublishTask : DefaultTask() {
     @get:Internal
     abstract val auth: Property<HangarAuthService>
@@ -16,6 +20,6 @@ abstract class HangarPublishTask : DefaultTask() {
     @TaskAction
     fun run() {
         val publication: HangarPublication = publication.get()
-        HangarRequestService(auth.get()).uploadVersion(publication)
+        HangarVersionPublisher(auth.get()).uploadVersion(publication)
     }
 }
