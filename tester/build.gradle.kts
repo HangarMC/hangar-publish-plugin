@@ -6,7 +6,7 @@ plugins {
 }
 
 hangarPublish {
-    publications.register("plugin") {
+    publications.register("publishPluginTest") {
         version.set("0.0.3")
         owner.set("hangarPublishPlugin")
         slug.set("test-project")
