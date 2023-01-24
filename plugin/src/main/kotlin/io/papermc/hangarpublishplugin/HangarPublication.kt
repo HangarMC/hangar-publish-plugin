@@ -116,11 +116,21 @@ interface HangarPublication {
 
         /**
          * The jar file to publish for this platform.
-         * Either this or an artifact URL must be configured, but not both.
+         *
+         * Either this or [url] must be configured, but not both.
          */
         @get:InputFile
         @get:Optional
         val jar: RegularFileProperty
+
+        /**
+         * The URL to download the jar for this platform.
+         *
+         * Either this or [jar] must be configured, but not both.
+         */
+        @get:Input
+        @get:Optional
+        val url: Property<String>
 
         /**
          * Container for [DependencyDetails] of this platform.
