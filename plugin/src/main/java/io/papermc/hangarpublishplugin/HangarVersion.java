@@ -1,7 +1,6 @@
 package io.papermc.hangarpublishplugin;
 
 import io.papermc.hangarpublishplugin.HangarPublication.DependencyDetails;
-import io.papermc.hangarpublishplugin.HangarPublication.Platform;
 import io.papermc.hangarpublishplugin.HangarPublication.PlatformDetails;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,16 +11,16 @@ import org.jetbrains.annotations.Nullable;
 
 final class HangarVersion {
     private final String version;
-    private final Map<Platform, List<PluginDependency>> pluginDependencies;
-    private final Map<Platform, List<String>> platformDependencies;
+    private final Map<String, List<PluginDependency>> pluginDependencies;
+    private final Map<String, List<String>> platformDependencies;
     private final String description;
     private final List<FileData> files;
     private final String channel;
 
     private HangarVersion(
         final String version,
-        final Map<Platform, List<PluginDependency>> pluginDependencies,
-        final Map<Platform, List<String>> platformDependencies,
+        final Map<String, List<PluginDependency>> pluginDependencies,
+        final Map<String, List<String>> platformDependencies,
         final String description,
         final List<FileData> files,
         final String channel
@@ -36,16 +35,16 @@ final class HangarVersion {
 
     public static HangarVersion fromPublication(final HangarPublication publication) {
         final Collection<PlatformDetails> platforms = publication.getPlatforms().getAsMap().values();
-        final Map<Platform, List<PluginDependency>> pluginDependencies = platforms.stream().collect(Collectors.toMap(
-            platform -> platform.getPlatform().get(),
+        final Map<String, List<PluginDependency>> pluginDependencies = platforms.stream().collect(Collectors.toMap(
+            PlatformDetails::getPlatform,
             platform -> platform.getDependencies().getAsMap().values().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
         ));
-        final Map<Platform, List<String>> platformDependencies = platforms.stream().collect(Collectors.toMap(
-            details -> details.getPlatform().get(),
+        final Map<String, List<String>> platformDependencies = platforms.stream().collect(Collectors.toMap(
+            PlatformDetails::getPlatform,
             details -> details.getPlatformVersions().get()
         ));
         // TODO: Check if the file for different platforms is the same and collect them in the same FileData
-        final List<FileData> fileData = platforms.stream().map(platform -> new FileData(Arrays.asList(platform.getPlatform().get()))).collect(Collectors.toList());
+        final List<FileData> fileData = platforms.stream().map(platform -> new FileData(Arrays.asList(platform.getPlatform()))).collect(Collectors.toList());
         return new HangarVersion(
             publication.getVersion().get(),
             pluginDependencies,
@@ -60,11 +59,11 @@ final class HangarVersion {
         return version;
     }
 
-    public Map<Platform, List<PluginDependency>> pluginDependencies() {
+    public Map<String, List<PluginDependency>> pluginDependencies() {
         return pluginDependencies;
     }
 
-    public Map<Platform, List<String>> platformDependencies() {
+    public Map<String, List<String>> platformDependencies() {
         return platformDependencies;
     }
 
@@ -133,19 +132,19 @@ final class HangarVersion {
     }
 
     static final class FileData {
-        private final List<Platform> platforms;
+        private final List<String> platforms;
         private final String externalUrl;
 
-        FileData(final List<Platform> platforms) {
+        FileData(final List<String> platforms) {
             this(platforms, null);
         }
 
-        FileData(final List<Platform> platforms, @Nullable final String externalUrl) {
+        FileData(final List<String> platforms, @Nullable final String externalUrl) {
             this.platforms = platforms;
             this.externalUrl = externalUrl;
         }
 
-        public List<Platform> platforms() {
+        public List<String> platforms() {
             return platforms;
         }
 

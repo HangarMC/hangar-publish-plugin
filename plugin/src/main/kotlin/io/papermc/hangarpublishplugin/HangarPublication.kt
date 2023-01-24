@@ -43,13 +43,6 @@ interface HangarPublication {
     @get:Nested
     val platforms: NamedDomainObjectContainer<PlatformDetails>
 
-    fun platform(platform: Platform, op: Action<PlatformDetails>) {
-        platforms.register(platform.name) {
-            this.platform.set(platform)
-            op.execute(this)
-        }
-    }
-
     interface PlatformDetails {
         @get:Inject
         val objects: ObjectFactory
@@ -60,8 +53,8 @@ interface HangarPublication {
         @get:Input
         val name: String
 
-        @get:Input
-        val platform: Property<Platform>
+        val platform: String
+            get() = name
 
         @get:Input
         val platformVersions: ListProperty<String>
@@ -139,10 +132,9 @@ interface HangarPublication {
         }
     }
 
-    // todo don't use enum
-    enum class Platform {
-        PAPER,
-        WATERFALL,
-        VELOCITY
+    companion object Platform {
+        const val PAPER = "PAPER"
+        const val WATERFALL = "WATERFALL"
+        const val VELOCITY = "VELOCITY"
     }
 }
