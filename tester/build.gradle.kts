@@ -27,7 +27,7 @@ val velocity = copyJar("velocity")
 hangarPublish {
     publications.register("publishPluginTest") {
         apiEndpoint.set("https://hangar.papermc.dev/api/v1/") // staging
-        version.set("0.0.6")
+        version.set(System.currentTimeMillis().toString())
         owner.set("hangarPublishPlugin")
         slug.set("test-project")
         channel.set("Release")
