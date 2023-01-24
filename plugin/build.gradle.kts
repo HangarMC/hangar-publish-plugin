@@ -5,6 +5,7 @@ plugins {
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "1.1.0"
     id("net.kyori.indra.publishing.gradle-plugin") version "3.0.1"
+    id("net.kyori.indra.license-header") version "3.0.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
 
@@ -13,6 +14,15 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+license {
+    header.set(resources.text.fromFile("../LICENSE_HEADER"))
+}
+
+tasks.register("format") {
+    dependsOn(tasks.ktlintFormat)
+    dependsOn(tasks.licenseFormat)
 }
 
 dependencies {
