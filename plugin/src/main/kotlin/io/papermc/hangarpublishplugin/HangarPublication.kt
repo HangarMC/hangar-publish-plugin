@@ -43,7 +43,7 @@ interface HangarPublication {
     @get:Nested
     val platforms: NamedDomainObjectContainer<PlatformDetails>
 
-    fun registerPlatform(platform: Platform, op: Action<PlatformDetails>) {
+    fun platform(platform: Platform, op: Action<PlatformDetails>) {
         platforms.register(platform.name) {
             this.platform.set(platform)
             op.execute(this)
