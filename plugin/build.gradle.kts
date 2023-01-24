@@ -18,6 +18,7 @@ repositories {
 dependencies {
     implementation("com.google.code.gson", "gson", "2.10.1")
     implementation("org.apache.httpcomponents.client5", "httpclient5", "5.2.1")
+    implementation("commons-io", "commons-io", "2.11.0")
 }
 
 testing {

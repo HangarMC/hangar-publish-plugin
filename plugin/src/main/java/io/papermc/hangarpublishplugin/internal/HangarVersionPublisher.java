@@ -32,10 +32,10 @@ public final class HangarVersionPublisher {
 
     public void uploadVersion(final HangarPublication publication) throws IOException {
         final HangarVersion version = HangarVersion.fromPublication(publication);
-        final List<File> files = publication.getPlatforms().stream()
-            .map(platform -> platform.getJar().getAsFile().getOrNull())
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList()); // TODO: Possibly not right
+        final List<File> files = version.files().stream()
+            .filter(HangarVersion.FileData::isFile)
+            .map(fileData -> publication.getPlatforms().getByName(fileData.firstPlatform()).getJar().getAsFile().get())
+            .collect(Collectors.toList());
         try (final CloseableHttpClient client = HttpClients.createDefault()) {
             final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
@@ -59,7 +59,7 @@ public final class HangarVersionPublisher {
 
             final boolean success = client.execute(post, response -> {
                 if (response.getCode() != 200) {
-                    LOGGER.error("Error uploading version {}: {}", response.getCode(), response.getReasonPhrase());
+                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), response.getReasonPhrase());
                     return false;
                 }
                 return true;

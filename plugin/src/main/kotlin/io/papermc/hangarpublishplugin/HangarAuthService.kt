@@ -45,7 +45,7 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
             LOGGER.error("Bad JWT request (400); is the API key correct?")
             return null
         } else if (response.code != 200) {
-            LOGGER.error("Error requesting JWT {}: {}", response.code, response.reasonPhrase)
+            LOGGER.error("Error requesting JWT, returned {}: {}", response.code, response.reasonPhrase)
             return null
         }
         val json = EntityUtils.toString(response.entity, Charsets.UTF_8)

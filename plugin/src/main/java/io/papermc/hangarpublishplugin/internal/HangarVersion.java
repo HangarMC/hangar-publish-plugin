@@ -4,11 +4,15 @@ import io.papermc.hangarpublishplugin.HangarProjectNamespace;
 import io.papermc.hangarpublishplugin.HangarPublication;
 import io.papermc.hangarpublishplugin.HangarPublication.DependencyDetails;
 import io.papermc.hangarpublishplugin.HangarPublication.PlatformDetails;
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,24 +40,22 @@ final class HangarVersion {
         this.channel = channel;
     }
 
-    public static HangarVersion fromPublication(final HangarPublication publication) {
-        final Collection<PlatformDetails> platforms = publication.getPlatforms().getAsMap().values();
-        final Map<String, List<PluginDependency>> pluginDependencies = platforms.stream().collect(Collectors.toMap(
+    public static HangarVersion fromPublication(final HangarPublication publication) throws IOException {
+        final Collection<PlatformDetails> platformDetails = publication.getPlatforms().getAsMap().values();
+        final Map<String, List<PluginDependency>> pluginDependencies = platformDetails.stream().collect(Collectors.toMap(
             PlatformDetails::getPlatform,
-            platform -> platform.getDependencies().getAsMap().values().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
+            details -> details.getDependencies().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
         ));
-        final Map<String, List<String>> platformDependencies = platforms.stream().collect(Collectors.toMap(
+        final Map<String, List<String>> platformDependencies = platformDetails.stream().collect(Collectors.toMap(
             PlatformDetails::getPlatform,
             details -> details.getPlatformVersions().get()
         ));
-        // TODO: Check if the file for different platforms is the same and collect them in the same FileData
-        final List<FileData> fileData = platforms.stream().map(platform -> new FileData(Arrays.asList(platform.getPlatform()))).collect(Collectors.toList());
         return new HangarVersion(
             publication.getVersion().get(),
             pluginDependencies,
             platformDependencies,
             publication.getChangelog().getOrNull(),
-            fileData,
+            FileData.fromPlatformDetails(platformDetails),
             publication.getChannel().get()
         );
     }
@@ -145,17 +147,86 @@ final class HangarVersion {
         }
 
         FileData(final List<String> platforms, @Nullable final String externalUrl) {
+            if (platforms.isEmpty()) {
+                throw new IllegalArgumentException("At least one platform needs to be provided in FileData.");
+            }
+
             this.platforms = platforms;
             this.externalUrl = externalUrl;
         }
 
         public List<String> platforms() {
-            return platforms;
+            return this.platforms;
         }
 
         @Nullable
         public String externalUrl() {
-            return externalUrl;
+            return this.externalUrl;
+        }
+
+        public String firstPlatform() {
+            return this.platforms.get(0);
+        }
+
+        public boolean isFile() {
+            return this.externalUrl == null;
+        }
+
+        public static List<FileData> fromPlatformDetails(final Collection<PlatformDetails> platformDetails) throws IOException {
+            // Check for duplicate files and collect them as one
+            final Map<File, List<String>> filePlatforms = new LinkedHashMap<>();
+            final Map<String, List<String>> urlPlatforms = new LinkedHashMap<>();
+            for (final PlatformDetails details : platformDetails) {
+                final File platformFile = details.getJar().getAsFile().getOrNull();
+                if (platformFile == null) {
+                    addURLPlatform(details, urlPlatforms);
+                    continue;
+                }
+
+                final List<String> platforms = filePlatforms.get(platformFile);
+                if (platforms != null) {
+                    platforms.add(details.getPlatform());
+                    continue;
+                }
+
+                boolean newFile = true;
+                for (final Map.Entry<File, List<String>> entry : filePlatforms.entrySet()) {
+                    if (FileUtils.contentEquals(entry.getKey(), platformFile)) {
+                        entry.getValue().add(details.getPlatform());
+                        newFile = false;
+                        break;
+                    }
+                }
+
+                if (newFile) {
+                    final List<String> newPlatforms = new ArrayList<>();
+                    newPlatforms.add(details.getPlatform());
+                    filePlatforms.put(platformFile, newPlatforms);
+                }
+            }
+
+            final List<FileData> fileData = filePlatforms.values().stream().map(FileData::new).collect(Collectors.toList());
+            for (final List<String> platforms : urlPlatforms.values()) {
+                fileData.add(new FileData(platforms));
+            }
+            return fileData;
+        }
+
+        private static void addURLPlatform(final PlatformDetails details, final Map<String, List<String>> urlPlatforms) {
+            final String url = details.getUrl().get();
+            if (url == null) {
+                throw new InvalidUserDataException("A platform download must provide a jar file or URL.");
+            }
+
+            urlPlatforms.compute(url, (key, value) -> {
+                if (value == null) {
+                    final List<String> platforms = new ArrayList<>();
+                    platforms.add(details.getPlatform());
+                    return platforms;
+                }
+                value.add(details.getPlatform());
+                return value;
+            });
         }
     }
 }
