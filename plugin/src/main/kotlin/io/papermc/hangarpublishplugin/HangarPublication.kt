@@ -2,6 +2,7 @@ package io.papermc.hangarpublishplugin
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -13,6 +14,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
+import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
 /**
@@ -37,6 +39,11 @@ interface HangarPublication {
      *
      * See [the Gradle docs](https://docs.gradle.org/current/userguide/build_environment.html)
      * for information on how to configure these properties.
+     *
+     * API keys can be created from `<hangar-url>/<user|organization>/settings/api-keys`.
+     *
+     * In order to publish versions the provided key will need the following permissions:
+     *  - `create_version`
      */
     @get:Input
     val apiKey: Property<String>
@@ -145,52 +152,55 @@ interface HangarPublication {
          * Registers a URL dependency without any extra configuration.
          *
          * @param url dependency URL
+         * @return registration provider
          */
-        fun urlDependency(url: String) {
+        fun urlDependency(url: String): NamedDomainObjectProvider<DependencyDetails> =
             urlDependency(url) {}
-        }
 
         /**
          * Registers a URL dependency, configuring it with the provided action.
          *
          * @param url dependency URL
          * @param op configuration action
+         * @return registration provider
          */
-        fun urlDependency(url: String, op: Action<DependencyDetails>) {
+        fun urlDependency(url: String, op: Action<DependencyDetails>): NamedDomainObjectProvider<DependencyDetails> =
             urlDependency(providers.provider { url }, op)
-        }
 
         /**
          * Registers a URL dependency without any extra configuration.
          *
          * @param url dependency URL
+         * @return registration provider
          */
-        fun urlDependency(url: Provider<String>) {
+        fun urlDependency(url: Provider<String>): NamedDomainObjectProvider<DependencyDetails> =
             urlDependency(url) {}
-        }
 
         /**
          * Registers a URL dependency, configuring it with the provided action.
          *
          * @param url dependency URL
          * @param op configuration action
+         * @return registration provider
          */
-        fun urlDependency(url: Provider<String>, op: Action<DependencyDetails>) {
-            dependencies.register(dependencies.size.toString()) {
+        fun urlDependency(url: Provider<String>, op: Action<DependencyDetails>): NamedDomainObjectProvider<DependencyDetails> =
+            dependencies.register(createDependencyName("url")) {
                 this.url.set(url)
+                this.url.disallowChanges()
+                hangarNamespace.disallowChanges()
+
                 op.execute(this)
             }
-        }
 
         /**
          * Registers a Hangar dependency without any extra configuration.
          *
          * @param owner dependency owner
          * @param slug dependency slug
+         * @return registration provider
          */
-        fun hangarDependency(owner: String, slug: String) {
+        fun hangarDependency(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails> =
             hangarDependency(owner, slug) {}
-        }
 
         /**
          * Registers a Hangar dependency, configuring it with the provided action.
@@ -198,20 +208,20 @@ interface HangarPublication {
          * @param owner dependency owner
          * @param slug dependency slug
          * @param op configuration action
+         * @return registration provider
          */
-        fun hangarDependency(owner: String, slug: String, op: Action<DependencyDetails>) {
+        fun hangarDependency(owner: String, slug: String, op: Action<DependencyDetails>): NamedDomainObjectProvider<DependencyDetails> =
             hangarDependency(providers.provider { owner }, providers.provider { slug }, op)
-        }
 
         /**
          * Registers a Hangar dependency without any extra configuration.
          *
          * @param owner dependency owner
          * @param slug dependency slug
+         * @return registration provider
          */
-        fun hangarDependency(owner: Provider<String>, slug: Provider<String>) {
+        fun hangarDependency(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails> =
             hangarDependency(owner, slug) {}
-        }
 
         /**
          * Registers a Hangar dependency, configuring it with the provided action.
@@ -219,15 +229,29 @@ interface HangarPublication {
          * @param owner dependency owner
          * @param slug dependency slug
          * @param op configuration action
+         * @return registration provider
          */
-        fun hangarDependency(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails>) {
-            dependencies.register(dependencies.size.toString()) {
-                val ns = objects.newInstance(HangarProjectNamespace::class.java)
+        fun hangarDependency(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails>): NamedDomainObjectProvider<DependencyDetails> =
+            dependencies.register(createDependencyName("hangar")) {
+                val ns = objects.newInstance<HangarProjectNamespace>()
                 ns.owner.set(owner)
+                ns.owner.disallowChanges()
                 ns.slug.set(slug)
+                ns.slug.disallowChanges()
+
                 hangarNamespace.set(ns)
+                hangarNamespace.disallowChanges()
+                url.disallowChanges()
+
                 op.execute(this)
             }
+
+        private fun createDependencyName(type: String): String {
+            val prefix = type + "ManagedDependency"
+            val existingOfType = dependencies.names.filter {
+                it.startsWith(prefix) && it.substringAfter(prefix).toIntOrNull() != null
+            }.size
+            return prefix + existingOfType
         }
     }
 
@@ -240,8 +264,8 @@ interface HangarPublication {
     abstract class DependencyDetails {
         /**
          * The name of the dependency. Not currently used for anything,
-         * the built-in factory methods will simply increment a counter
-         * to ensure uniqueness.
+         * the built-in factory methods will simply ensure each new
+         * dependency has a unique name to others in the collection.
          */
         @get:Input
         abstract val name: String
