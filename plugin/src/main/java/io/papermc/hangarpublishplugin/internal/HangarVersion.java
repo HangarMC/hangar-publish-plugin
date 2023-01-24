@@ -191,7 +191,7 @@ final class HangarVersion {
 
                 boolean newFile = true;
                 for (final Map.Entry<File, List<String>> entry : filePlatforms.entrySet()) {
-                    if (FileUtils.contentEquals(entry.getKey(), platformFile)) {
+                    if (entry.getKey().getCanonicalPath().equals(platformFile.getCanonicalPath())) {
                         entry.getValue().add(details.getPlatform());
                         newFile = false;
                         break;
