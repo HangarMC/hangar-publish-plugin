@@ -67,7 +67,7 @@ testing {
 }
 
 indra {
-    publishSnapshotsTo("paper", "https://papermc.io/repo/repository/maven-snapshots/")
+    publishSnapshotsTo("paper", "https://repo.papermc.io/repository/maven-snapshots/")
 }
 
 indraPluginPublishing {
