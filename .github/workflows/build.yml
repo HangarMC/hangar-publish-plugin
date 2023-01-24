@@ -37,8 +37,7 @@ jobs:
                     echo "STATUS=release" >> $GITHUB_ENV
                   fi
             - name: "publish snapshot"
-              if: "${{ false }}" # todo: remove this line and uncomment below line to enable snapshot publishing
-              #if: "${{ env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}"
+              if: "${{ env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}"
               run: ./gradlew :plugin:publish
               env:
                   ORG_GRADLE_PROJECT_paperUsername: "${{ secrets.PAPER_REPO_USERNAME }}"
