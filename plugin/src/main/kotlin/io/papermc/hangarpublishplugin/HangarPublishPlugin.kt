@@ -23,11 +23,12 @@ class HangarPublishPlugin : Plugin<Project> {
                 project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key")
                     .orElse(project.providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key"))
             )
-            apiEndpoint.convention("http://localhost:3333/api/v1/") // todo
+            apiEndpoint.convention("https://hangar.papermc.dev/api/v1/") // todo
 
             project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
+                outputs.upToDateWhen { false } // always run when requested
                 auth.set(authService)
                 usesService(authService)
                 publication.set(this@all)

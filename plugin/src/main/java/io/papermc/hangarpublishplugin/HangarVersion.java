@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Nullable;
 
 final class HangarVersion {
@@ -96,12 +97,14 @@ final class HangarVersion {
         }
 
         public static PluginDependency fromDependencyDetails(final DependencyDetails dependencyDetails) {
-            if (dependencyDetails.getHangarNamespace().isPresent()) {
+            if (dependencyDetails.getHangarNamespace().isPresent() && !dependencyDetails.getUrl().isPresent()) {
                 final HangarProjectNamespace ns = dependencyDetails.getHangarNamespace().get();
                 final HangarProjectNamespaceSerializable namespace = new HangarProjectNamespaceSerializable(ns.getOwner().get(), ns.getSlug().get());
                 return PluginDependency.createWithHangarNamespace(dependencyDetails.getName(), dependencyDetails.getRequired().get(), namespace);
+            } else if (!dependencyDetails.getHangarNamespace().isPresent() && dependencyDetails.getUrl().isPresent()) {
+                return PluginDependency.createWithUrl(dependencyDetails.getName(), dependencyDetails.getRequired().get(), dependencyDetails.getUrl().get());
             }
-            return PluginDependency.createWithUrl(dependencyDetails.getName(), dependencyDetails.getRequired().get(), dependencyDetails.getUrl().get());
+            throw new InvalidUserDataException("A plugin dependency must provide a URL or a Hangar namespace, but not both.");
         }
 
         public static PluginDependency createWithHangarNamespace(final String name, final boolean required, final HangarProjectNamespaceSerializable namespace) {

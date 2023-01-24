@@ -25,23 +25,22 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
 
     @Throws(IOException::class)
     @Synchronized
-    fun fetchJwt(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken {
+    fun jwt(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken {
         val key = "$apiEndpoint:$apiKey"
         val get = cache[key]
         if (get != null && !get.shouldRenew()) {
             return get
         }
-        val fetch = fetchJwt0(client, apiEndpoint, apiKey) ?: throw GradleException("Error getting JWT")
+        val fetch = fetchJwt(client, apiEndpoint, apiKey) ?: throw GradleException("Error getting JWT")
         cache[key] = fetch
         return fetch
     }
 
     @Throws(IOException::class)
-    private fun fetchJwt0(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken? {
+    private fun fetchJwt(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken? {
         return client.execute(
             HttpPost(apiEndpoint + "authenticate?apiKey=" + apiKey),
             HttpClientResponseHandler { response: ClassicHttpResponse ->
-                println(response.code)
                 if (response.code == 400) {
                     LOGGER.error("Bad JWT request; is the API key correct?")
                     return@HttpClientResponseHandler null

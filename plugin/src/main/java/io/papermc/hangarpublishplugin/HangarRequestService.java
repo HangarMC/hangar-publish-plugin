@@ -1,9 +1,11 @@
 package io.papermc.hangarpublishplugin;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -20,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public final class HangarRequestService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HangarRequestService.class);
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().create();
 
     private final HangarAuthService auth;
 
@@ -30,12 +32,16 @@ public final class HangarRequestService {
 
     public void uploadVersion(final HangarPublication publication) throws IOException {
         final HangarVersion version = HangarVersion.fromPublication(publication);
-        final List<File> files = publication.getPlatforms().stream().map(platform -> platform.getJar().getAsFile().get()).collect(Collectors.toList()); // TODO: Possibly not right
+        final List<File> files = publication.getPlatforms().stream()
+            .map(platform -> platform.getJar().getAsFile().getOrNull())
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList()); // TODO: Possibly not right
         try (final CloseableHttpClient client = HttpClients.createDefault()) {
             final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
             // Attach version upload json data
-            builder.addPart("versionUpload", new StringBody(GSON.toJson(version), ContentType.APPLICATION_JSON));
+            final String json = GSON.toJson(version);
+            builder.addPart("versionUpload", new StringBody(json, ContentType.APPLICATION_JSON));
 
             // Attach files (one file for each platform where no external url is defined in the version upload data)
             for (final File file : files) {
@@ -68,7 +74,7 @@ public final class HangarRequestService {
         final HttpClient client,
         final HttpMessage message
     ) throws IOException {
-        final HangarAuthorizationToken jwt = this.auth.fetchJwt(client, apiEndpoint, apiKey);
+        final HangarAuthorizationToken jwt = this.auth.jwt(client, apiEndpoint, apiKey);
         message.addHeader("Authorization", jwt.jwt());
     }
 }

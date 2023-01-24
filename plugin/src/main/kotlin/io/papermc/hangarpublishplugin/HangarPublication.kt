@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import javax.inject.Inject
@@ -53,6 +54,7 @@ interface HangarPublication {
         @get:Input
         val name: String
 
+        @get:Internal
         val platform: String
             get() = name
 
