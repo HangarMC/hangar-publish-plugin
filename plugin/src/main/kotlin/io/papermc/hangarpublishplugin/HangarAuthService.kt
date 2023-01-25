@@ -19,6 +19,7 @@ package io.papermc.hangarpublishplugin
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import io.papermc.hangarpublishplugin.internal.ErrorResponseParser
 import io.papermc.hangarpublishplugin.internal.HangarAuthorizationToken
 import org.apache.hc.client5.http.classic.HttpClient
 import org.apache.hc.client5.http.classic.methods.HttpPost
@@ -57,11 +58,8 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
     }
 
     private fun handleResponse(response: ClassicHttpResponse): HangarAuthorizationToken? {
-        if (response.code == 400) {
-            LOGGER.error("Bad JWT request (400); is the API key correct?")
-            return null
-        } else if (response.code != 200) {
-            LOGGER.error("Error requesting JWT, returned {}: {}", response.code, response.reasonPhrase)
+        if (response.code != 200) {
+            LOGGER.error("Error requesting JWT, returned {}: {}", response.code, ErrorResponseParser.parseErrorMessage(response))
             return null
         }
         val json = EntityUtils.toString(response.entity, Charsets.UTF_8)

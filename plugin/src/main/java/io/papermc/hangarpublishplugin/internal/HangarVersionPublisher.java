@@ -74,7 +74,7 @@ public final class HangarVersionPublisher {
 
             final boolean success = client.execute(post, response -> {
                 if (response.getCode() != 200) {
-                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), response.getReasonPhrase());
+                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), ErrorResponseParser.parseErrorMessage(response));
                     return false;
                 }
                 return true;
