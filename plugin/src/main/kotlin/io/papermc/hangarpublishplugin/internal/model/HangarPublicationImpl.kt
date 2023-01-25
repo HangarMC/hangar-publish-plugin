@@ -14,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.papermc.hangarpublishplugin
+package io.papermc.hangarpublishplugin.internal.model
 
-import io.papermc.hangarpublishplugin.internal.HangarVersionPublisher
 import io.papermc.hangarpublishplugin.model.HangarPublication
-import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.TaskAction
+import io.papermc.hangarpublishplugin.model.PlatformDetails
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
+import org.gradle.kotlin.dsl.newInstance
+import javax.inject.Inject
 
-/**
- * Task that publishes a [HangarPublication].
- */
-abstract class HangarPublishTask : DefaultTask() {
-    @get:Internal
-    abstract val auth: Property<HangarAuthService>
-
-    @get:Nested
-    abstract val publication: Property<HangarPublication>
-
-    @TaskAction
-    fun run() {
-        val publication: HangarPublication = publication.get()
-        HangarVersionPublisher(auth.get()).uploadVersion(publication)
+abstract class HangarPublicationImpl @Inject constructor(
+    override val name: String,
+    objects: ObjectFactory
+) : HangarPublication {
+    override val platforms: NamedDomainObjectContainer<PlatformDetails> = objects.domainObjectContainer(PlatformDetails::class.java) { name ->
+        objects.newInstance(PlatformDetailsImpl::class, name)
     }
 }

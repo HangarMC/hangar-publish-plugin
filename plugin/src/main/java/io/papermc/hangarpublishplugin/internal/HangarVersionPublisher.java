@@ -19,7 +19,7 @@ package io.papermc.hangarpublishplugin.internal;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.papermc.hangarpublishplugin.HangarAuthService;
-import io.papermc.hangarpublishplugin.HangarPublication;
+import io.papermc.hangarpublishplugin.model.HangarPublication;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;

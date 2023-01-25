@@ -1,4 +1,4 @@
-import io.papermc.hangarpublishplugin.HangarPublication
+import io.papermc.hangarpublishplugin.model.Platforms
 
 plugins {
     java
@@ -33,19 +33,19 @@ hangarPublish {
         channel.set("Release")
         changelog.set("Removed Herobrine")
         platforms {
-            register(HangarPublication.Platform.PAPER) {
+            register(Platforms.PAPER) {
                 jar.set(paper)
                 platformVersions.set(listOf("1.18", "1.19"))
                 hangarDependency("kennytv", "Test1") {
                     required.set(false)
                 }
             }
-            register(HangarPublication.Platform.WATERFALL) {
+            register(Platforms.WATERFALL) {
                 jar.set(waterfall)
                 platformVersions.set(listOf("1.19"))
-                urlDependency("https://google.com")
+                urlDependency("Google", "https://google.com")
             }
-            register(HangarPublication.Platform.VELOCITY) {
+            register(Platforms.VELOCITY) {
                 jar.set(velocity)
                 platformVersions.set(listOf("3.1"))
             }

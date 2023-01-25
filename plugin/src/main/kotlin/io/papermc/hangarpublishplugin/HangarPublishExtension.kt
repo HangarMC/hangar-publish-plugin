@@ -16,16 +16,13 @@
  */
 package io.papermc.hangarpublishplugin
 
+import io.papermc.hangarpublishplugin.model.HangarPublication
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
-import javax.inject.Inject
 
 /**
  * Extension holding configuration for [HangarPublishPlugin].
  */
-abstract class HangarPublishExtension @Inject constructor(
-    objects: ObjectFactory
-) {
+interface HangarPublishExtension {
     /**
      * Container holding Hangar publications for a project.
      *
@@ -43,19 +40,18 @@ abstract class HangarPublishExtension @Inject constructor(
      *         channel.set("Release")
      *         changelog.set("Removed Herobrine")
      *         platforms {
-     *             register(HangarPublication.Platform.PAPER) {
+     *             register(Platforms.PAPER) {
      *                 jar.set(tasks.jar.flatMap { it.archiveFile })
      *                 platformVersions.set(listOf("1.18", "1.19"))
      *                 hangarDependency("Someone", "Something") {
      *                     required.set(false)
      *                 }
-     *                 urlDependency("https://dependency-plugin-website.com/")
+     *                 urlDependency("Some Dependency", "https://dependency-plugin-website.com/")
      *             }
      *         }
      *     }
      * }
      * ```
      */
-    val publications: NamedDomainObjectContainer<HangarPublication> =
-        objects.domainObjectContainer(HangarPublication::class.java)
+    val publications: NamedDomainObjectContainer<HangarPublication>
 }

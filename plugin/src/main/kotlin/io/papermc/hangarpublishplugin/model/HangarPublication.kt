@@ -1,0 +1,104 @@
+/*
+ * Hangar Publish Plugin Gradle Plugin
+ * Copyright (c) 2023 HangarMC Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.papermc.hangarpublishplugin.model
+
+import io.papermc.hangarpublishplugin.HangarPublishExtension
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
+
+/**
+ * Defines a Hangar Version publication.
+ *
+ * See [HangarPublishExtension.publications] for an example registration.
+ */
+interface HangarPublication {
+    /**
+     * The Hangar API endpoint to use. Defaults to Paper's instance.
+     */
+    @get:Input
+    val apiEndpoint: Property<String>
+
+    /**
+     * The API key to use for publishing.
+     *
+     * If not configured, will default to checking the
+     * `io.papermc.hangar-publish-plugin.<publicationName>.api-key`,
+     * and then the `io.papermc.hangar-publish-plugin.default-api-key`
+     * Gradle properties.
+     *
+     * See [the Gradle docs](https://docs.gradle.org/current/userguide/build_environment.html)
+     * for information on how to configure these properties.
+     *
+     * API keys can be created from `<hangar-url>/<user|organization>/settings/api-keys`.
+     *
+     * In order to publish versions the provided key will need the following permissions:
+     *  - `create_version`
+     */
+    @get:Input
+    val apiKey: Property<String>
+
+    /**
+     * Name of the publication.
+     */
+    @get:Input
+    val name: String
+
+    /**
+     * The owner (user or organization) of the Hangar project this publication is for.
+     */
+    @get:Input
+    val owner: Property<String>
+
+    /**
+     * The slug/id of the Hangar project this publication is for.
+     */
+    @get:Input
+    val slug: Property<String>
+
+    /**
+     * The version for this publication.
+     */
+    @get:Input
+    val version: Property<String>
+
+    /**
+     * The channel for this publication, i.e. "Release" or "Snapshot".
+     */
+    @get:Input
+    val channel: Property<String>
+
+    /**
+     * An optional changelog for this version publication. Formatted in markdown.
+     */
+    @get:Input
+    @get:Optional
+    val changelog: Property<String>
+
+    /**
+     * Container holding the [PlatformDetails] for each
+     * platform in this publication.
+     *
+     * Each registration's name will be used as the platform. For convenience
+     * [Platforms] holds constants for all available platforms
+     * on Paper's Hangar instance.
+     */
+    @get:Nested
+    val platforms: NamedDomainObjectContainer<PlatformDetails>
+}

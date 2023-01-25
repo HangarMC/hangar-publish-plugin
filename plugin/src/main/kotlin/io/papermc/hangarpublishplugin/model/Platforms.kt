@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.papermc.hangarpublishplugin
+package io.papermc.hangarpublishplugin.model
 
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-
-interface HangarProjectNamespace {
-    @get:Input
-    val owner: Property<String>
-
-    @get:Input
-    val slug: Property<String>
+/**
+ * Constants for the available platforms on Paper's Hangar instance.
+ */
+object Platforms {
+    const val PAPER: String = "PAPER"
+    const val WATERFALL: String = "WATERFALL"
+    const val VELOCITY: String = "VELOCITY"
 }

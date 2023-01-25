@@ -16,21 +16,28 @@
  */
 package io.papermc.hangarpublishplugin
 
+import io.papermc.hangarpublishplugin.internal.HangarPublishExtensionImpl
+import io.papermc.hangarpublishplugin.model.HangarPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
 class HangarPublishPlugin : Plugin<Project> {
-    companion object {
-        const val PAPER_HANGAR_API = "https://hangar.papermc.io/api/v1/"
-        const val TASK_GROUP = "Hangar Publication"
+    private companion object {
+        const val PAPER_HANGAR_API: String = "https://hangar.papermc.io/api/v1/"
+        const val TASK_GROUP: String = "Hangar Publication"
+        const val EXTENSION_NAME: String = "hangarPublish"
+        const val AUTH_SERVICE_NAME: String = "hangar-auth"
     }
 
     override fun apply(project: Project) {
-        val authService = project.gradle.sharedServices.registerIfAbsent("hangar-auth", HangarAuthService::class.java) {}
+        val authService = project.gradle.sharedServices.registerIfAbsent(AUTH_SERVICE_NAME, HangarAuthService::class.java) {}
 
-        val ext = project.extensions.create<HangarPublishExtension>("hangarPublish")
+        val ext = project.extensions.create(
+            HangarPublishExtension::class.java,
+            EXTENSION_NAME,
+            HangarPublishExtensionImpl::class.java
+        )
 
         ext.publications.all {
             apiKey.convention(
@@ -39,7 +46,7 @@ class HangarPublishPlugin : Plugin<Project> {
             )
             apiEndpoint.convention(PAPER_HANGAR_API)
 
-            project.tasks.register<HangarPublishTask>("publish${name.capitalize()}PublicationToHangar") {
+            project.tasks.register<HangarPublishTask>(taskName()) {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
                 outputs.upToDateWhen { false } // always run when requested
@@ -49,4 +56,7 @@ class HangarPublishPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun HangarPublication.taskName(): String =
+        "publish${name.capitalize().replace(' ', '_')}PublicationToHangar"
 }

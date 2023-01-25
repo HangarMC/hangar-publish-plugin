@@ -16,11 +16,11 @@
  */
 package io.papermc.hangarpublishplugin.internal;
 
-public final class HangarProjectNamespaceSerializable {
+final class HangarProjectNamespace {
     private final String owner;
     private final String slug;
 
-    public HangarProjectNamespaceSerializable(final String owner, final String slug) {
+    public HangarProjectNamespace(final String owner, final String slug) {
         this.owner = owner;
         this.slug = slug;
     }
@@ -28,13 +28,5 @@ public final class HangarProjectNamespaceSerializable {
     @Override
     public String toString() {
         return this.owner + "/" + this.slug;
-    }
-
-    public String owner() {
-        return owner;
-    }
-
-    public String slug() {
-        return slug;
     }
 }

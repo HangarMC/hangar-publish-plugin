@@ -16,10 +16,9 @@
  */
 package io.papermc.hangarpublishplugin.internal;
 
-import io.papermc.hangarpublishplugin.HangarProjectNamespace;
-import io.papermc.hangarpublishplugin.HangarPublication;
-import io.papermc.hangarpublishplugin.HangarPublication.DependencyDetails;
-import io.papermc.hangarpublishplugin.HangarPublication.PlatformDetails;
+import io.papermc.hangarpublishplugin.model.DependencyDetails;
+import io.papermc.hangarpublishplugin.model.HangarPublication;
+import io.papermc.hangarpublishplugin.model.PlatformDetails;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import java.util.stream.Collectors;
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"}) // Fields used for serialization
 final class HangarVersion {
     private final String version;
     private final Map<String, List<PluginDependency>> pluginDependencies;
@@ -55,16 +55,10 @@ final class HangarVersion {
         this.channel = channel;
     }
 
-    public static HangarVersion fromPublication(final HangarPublication publication) throws IOException {
+    static HangarVersion fromPublication(final HangarPublication publication) throws IOException {
         final Collection<PlatformDetails> platformDetails = publication.getPlatforms().getAsMap().values();
-        final Map<String, List<PluginDependency>> pluginDependencies = platformDetails.stream().collect(Collectors.toMap(
-            PlatformDetails::getPlatform,
-            details -> details.getDependencies().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
-        ));
-        final Map<String, List<String>> platformDependencies = platformDetails.stream().collect(Collectors.toMap(
-            PlatformDetails::getPlatform,
-            details -> details.getPlatformVersions().get()
-        ));
+        final Map<String, List<PluginDependency>> pluginDependencies = pluginDependenciesByPlatform(platformDetails);
+        final Map<String, List<String>> platformDependencies = platformVersionsByPlatform(platformDetails);
         return new HangarVersion(
             publication.getVersion().get(),
             pluginDependencies,
@@ -75,37 +69,52 @@ final class HangarVersion {
         );
     }
 
-    public String version() {
-        return version;
+    private static Map<String, List<String>> platformVersionsByPlatform(final Collection<PlatformDetails> platformDetails) {
+        return platformDetails.stream().collect(Collectors.toMap(
+            PlatformDetails::getPlatform,
+            details -> details.getPlatformVersions().get()
+        ));
     }
 
-    public Map<String, List<PluginDependency>> pluginDependencies() {
-        return pluginDependencies;
+    private static Map<String, List<PluginDependency>> pluginDependenciesByPlatform(final Collection<PlatformDetails> platformDetails) {
+        return platformDetails.stream().collect(Collectors.toMap(
+            PlatformDetails::getPlatform,
+            details -> details.getDependencies().stream().map(PluginDependency::fromDependencyDetails).collect(Collectors.toList())
+        ));
     }
 
-    public Map<String, List<String>> platformDependencies() {
-        return platformDependencies;
+    List<FileData> files() {
+        return this.files;
     }
 
-    public String description() {
-        return description;
-    }
-
-    public List<FileData> files() {
-        return files;
-    }
-
-    public String channel() {
-        return channel;
-    }
-
-    static final class PluginDependency {
+    private static final class PluginDependency {
         private final String name;
         private final boolean required;
-        private final HangarProjectNamespaceSerializable namespace;
-        private final String externalUrl;
+        private final @Nullable HangarProjectNamespace namespace;
+        private final @Nullable String externalUrl;
 
-        private PluginDependency(final String name, final boolean required, @Nullable final HangarProjectNamespaceSerializable namespace, @Nullable final String externalUrl) {
+        private static PluginDependency create(
+            final String name,
+            final boolean required,
+            final HangarProjectNamespace namespace
+        ) {
+            return new PluginDependency(name, required, namespace, null);
+        }
+
+        private static PluginDependency create(
+            final String name,
+            final boolean required,
+            final String externalUrl
+        ) {
+            return new PluginDependency(name, required, null, externalUrl);
+        }
+
+        private PluginDependency(
+            final String name,
+            final boolean required,
+            @Nullable final HangarProjectNamespace namespace,
+            @Nullable final String externalUrl
+        ) {
             if (namespace == null && externalUrl == null) {
                 throw new IllegalArgumentException("Either a Hangar namespace or an external url needs to be defined");
             }
@@ -115,53 +124,49 @@ final class HangarVersion {
             this.externalUrl = externalUrl;
         }
 
-        public static PluginDependency fromDependencyDetails(final DependencyDetails dependencyDetails) {
-            if (dependencyDetails.getHangarNamespace().isPresent() && !dependencyDetails.getUrl().isPresent()) {
-                final HangarProjectNamespace ns = dependencyDetails.getHangarNamespace().get();
-                final HangarProjectNamespaceSerializable namespace = new HangarProjectNamespaceSerializable(ns.getOwner().get(), ns.getSlug().get());
-                return PluginDependency.createWithHangarNamespace(dependencyDetails.getName(), dependencyDetails.getRequired().get(), namespace);
-            } else if (!dependencyDetails.getHangarNamespace().isPresent() && dependencyDetails.getUrl().isPresent()) {
-                return PluginDependency.createWithUrl(dependencyDetails.getName(), dependencyDetails.getRequired().get(), dependencyDetails.getUrl().get());
+        static PluginDependency fromDependencyDetails(final DependencyDetails dependencyDetails) {
+            if (dependencyDetails instanceof DependencyDetails.Hangar) {
+                return fromHangarDependencyDetails((DependencyDetails.Hangar) dependencyDetails);
+            } else if (dependencyDetails instanceof DependencyDetails.Url) {
+                return fromUrlDependencyDetails((DependencyDetails.Url) dependencyDetails);
             }
-            throw new InvalidUserDataException("A plugin dependency must provide a URL or a Hangar namespace, but not both.");
+            throw new InvalidUserDataException(String.format(
+                "Unknown dependency type: %s, expected %s or %s.",
+                dependencyDetails.getClass().getName(),
+                DependencyDetails.Hangar.class.getName(),
+                DependencyDetails.Url.class.getName()
+            ));
         }
 
-        public static PluginDependency createWithHangarNamespace(final String name, final boolean required, final HangarProjectNamespaceSerializable namespace) {
-            return new PluginDependency(name, required, namespace, null);
+        private static PluginDependency fromUrlDependencyDetails(final DependencyDetails.Url details) {
+            return PluginDependency.create(
+                details.getName(),
+                details.getRequired().get(),
+                details.getUrl().get()
+            );
         }
 
-        public static PluginDependency createWithUrl(final String name, final boolean required, final String externalUrl) {
-            return new PluginDependency(name, required, null, externalUrl);
-        }
-
-        public String name() {
-            return name;
-        }
-
-        public boolean required() {
-            return required;
-        }
-
-        @Nullable
-        public HangarProjectNamespaceSerializable namespace() {
-            return namespace;
-        }
-
-        @Nullable
-        public String externalUrl() {
-            return externalUrl;
+        private static PluginDependency fromHangarDependencyDetails(final DependencyDetails.Hangar details) {
+            return PluginDependency.create(
+                details.getName(),
+                details.getRequired().get(),
+                new HangarProjectNamespace(details.getOwner().get(), details.getSlug().get())
+            );
         }
     }
 
     static final class FileData {
         private final List<String> platforms;
-        private final String externalUrl;
+        private final @Nullable String externalUrl;
 
         FileData(final List<String> platforms) {
             this(platforms, null);
         }
 
-        FileData(final List<String> platforms, @Nullable final String externalUrl) {
+        FileData(
+            final List<String> platforms,
+            @Nullable final String externalUrl
+        ) {
             if (platforms.isEmpty()) {
                 throw new IllegalArgumentException("At least one platform needs to be provided in FileData.");
             }
@@ -170,24 +175,15 @@ final class HangarVersion {
             this.externalUrl = externalUrl;
         }
 
-        public List<String> platforms() {
-            return this.platforms;
-        }
-
-        @Nullable
-        public String externalUrl() {
-            return this.externalUrl;
-        }
-
-        public String firstPlatform() {
+        String firstPlatform() {
             return this.platforms.get(0);
         }
 
-        public boolean isFile() {
+        boolean isFile() {
             return this.externalUrl == null;
         }
 
-        public static List<FileData> fromPlatformDetails(final Collection<PlatformDetails> platformDetails) throws IOException {
+        static List<FileData> fromPlatformDetails(final Collection<PlatformDetails> platformDetails) throws IOException {
             // Check for duplicate files and collect them as one
             final Map<File, List<String>> filePlatforms = new LinkedHashMap<>();
             final Map<String, List<String>> urlPlatforms = new LinkedHashMap<>();
@@ -228,7 +224,7 @@ final class HangarVersion {
         }
 
         private static void addURLPlatform(final PlatformDetails details, final Map<String, List<String>> urlPlatforms) {
-            final String url = details.getUrl().get();
+            final String url = details.getUrl().getOrNull();
             if (url == null) {
                 throw new InvalidUserDataException("A platform download must provide a jar file or URL.");
             }
