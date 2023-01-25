@@ -94,17 +94,16 @@ final class HangarVersion {
         private final @Nullable String externalUrl;
 
         private static PluginDependency create(
-            final String name,
-            final boolean required,
-            final HangarProjectNamespace namespace
+            final HangarProjectNamespace namespace,
+            final boolean required
         ) {
-            return new PluginDependency(name, required, namespace, null);
+            return new PluginDependency(null, required, namespace, null);
         }
 
         private static PluginDependency create(
             final String name,
-            final boolean required,
-            final String externalUrl
+            final String externalUrl,
+            final boolean required
         ) {
             return new PluginDependency(name, required, null, externalUrl);
         }
@@ -141,16 +140,15 @@ final class HangarVersion {
         private static PluginDependency fromUrlDependencyDetails(final DependencyDetails.Url details) {
             return PluginDependency.create(
                 details.getName(),
-                details.getRequired().get(),
-                details.getUrl().get()
+                details.getUrl().get(),
+                details.getRequired().get()
             );
         }
 
         private static PluginDependency fromHangarDependencyDetails(final DependencyDetails.Hangar details) {
             return PluginDependency.create(
-                details.getName(),
-                details.getRequired().get(),
-                new HangarProjectNamespace(details.getOwner().get(), details.getSlug().get())
+                new HangarProjectNamespace(details.getOwner().get(), details.getSlug().get()),
+                details.getRequired().get()
             );
         }
     }
