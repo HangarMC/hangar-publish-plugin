@@ -26,7 +26,7 @@ import javax.inject.Inject
 abstract class HangarPublishExtensionImpl @Inject constructor(
     objects: ObjectFactory
 ) : HangarPublishExtension {
-    override val publications: NamedDomainObjectContainer<HangarPublication> = objects.domainObjectContainer(HangarPublication::class.java) { name ->
-        objects.newInstance(HangarPublicationImpl::class.java, name)
-    }
+    @Suppress("unchecked_cast") // GH:gradle/gradle#23655
+    override val publications: NamedDomainObjectContainer<HangarPublication> =
+        objects.domainObjectContainer(HangarPublicationImpl::class.java) as NamedDomainObjectContainer<HangarPublication>
 }

@@ -20,14 +20,13 @@ import io.papermc.hangarpublishplugin.model.HangarPublication
 import io.papermc.hangarpublishplugin.model.PlatformDetails
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
-import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
 abstract class HangarPublicationImpl @Inject constructor(
     override val name: String,
     objects: ObjectFactory
 ) : HangarPublication {
-    override val platforms: NamedDomainObjectContainer<PlatformDetails> = objects.domainObjectContainer(PlatformDetails::class.java) { name ->
-        objects.newInstance(PlatformDetailsImpl::class, name)
-    }
+    @Suppress("unchecked_cast") // GH:gradle/gradle#23655
+    override val platforms: NamedDomainObjectContainer<PlatformDetails> =
+        objects.domainObjectContainer(PlatformDetailsImpl::class.java) as NamedDomainObjectContainer<PlatformDetails>
 }
