@@ -4,13 +4,12 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "1.1.0"
-    id("net.kyori.indra.publishing.gradle-plugin") version "3.0.1"
     id("net.kyori.indra.license-header") version "3.0.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
 
 group = "io.papermc"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 repositories {
     mavenCentral()
@@ -66,19 +65,22 @@ testing {
     }
 }
 
-indra {
-    publishSnapshotsTo("paper", "https://repo.papermc.io/repository/maven-snapshots/")
+publishing.repositories.maven("https://repo.papermc.io/repository/maven-snapshots/") {
+    name = "paper"
+    credentials(PasswordCredentials::class)
+    mavenContent { snapshotsOnly() }
 }
 
-indraPluginPublishing {
-    website("https://github.com/HangarMC/hangar-publish-plugin")
-    plugin(
-        "hangar-publish-plugin",
-        "io.papermc.hangarpublishplugin.HangarPublishPlugin",
-        "Hangar Publish Plugin",
-        "Gradle plugin for publishing artifacts to Hangar",
-        listOf("hangar", "publishing", "minecraft")
-    )
+gradlePlugin {
+    website.set("https://github.com/HangarMC/hangar-publish-plugin")
+    vcsUrl.set("https://github.com/HangarMC/hangar-publish-plugin")
+    plugins.create("hangar-publish-plugin") {
+        id = "io.papermc.hangar-publish-plugin"
+        displayName = "Hangar Publish Plugin"
+        description = "Gradle plugin for publishing artifacts to Hangar"
+        tags.set(listOf("hangar", "publishing", "minecraft"))
+        implementationClass = "io.papermc.hangarpublishplugin.HangarPublishPlugin"
+    }
 }
 
 gradlePlugin.testSourceSets(sourceSets["functionalTest"])
