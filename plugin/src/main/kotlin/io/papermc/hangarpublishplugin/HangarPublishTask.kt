@@ -23,10 +23,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.UntrackedTask
 
 /**
  * Task that publishes a [HangarPublication].
  */
+@UntrackedTask(because = "HangarPublishTask should always run when requested. Additionally, it's outputs are stored remotely and cannot be tracked properly.")
 abstract class HangarPublishTask : DefaultTask() {
     @get:Internal
     abstract val auth: Property<HangarAuthService>

@@ -42,7 +42,7 @@ class HangarPublishPlugin : Plugin<Project> {
         val publishAll = project.tasks.register("publishAllPublicationsToHangar") {
             group = TASK_GROUP
             description = "Publishes all registered Hangar publications for this project."
-            outputs.upToDateWhen { false } // always run when requested
+            doNotTrackState("$name should always run when requested")
         }
 
         ext.publications.all {
@@ -55,7 +55,6 @@ class HangarPublishPlugin : Plugin<Project> {
             val publishTask = project.tasks.register<HangarPublishTask>(taskName()) {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
-                outputs.upToDateWhen { false } // always run when requested
                 auth.set(authService)
                 usesService(authService)
                 publication.set(this@all)
