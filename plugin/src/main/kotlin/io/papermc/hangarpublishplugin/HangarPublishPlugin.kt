@@ -25,7 +25,7 @@ import org.gradle.kotlin.dsl.register
 class HangarPublishPlugin : Plugin<Project> {
     private companion object {
         const val PAPER_HANGAR_API: String = "https://hangar.papermc.io/api/v1/"
-        const val TASK_GROUP: String = "Hangar Publication"
+        const val TASK_GROUP: String = "Hangar Publishing"
         const val EXTENSION_NAME: String = "hangarPublish"
         const val AUTH_SERVICE_NAME: String = "hangar-auth"
     }
@@ -39,6 +39,12 @@ class HangarPublishPlugin : Plugin<Project> {
             HangarPublishExtensionImpl::class.java
         )
 
+        val publishAll = project.tasks.register("publishAllPublicationsToHangar") {
+            group = TASK_GROUP
+            description = "Publishes all registered Hangar publications for this project."
+            outputs.upToDateWhen { false } // always run when requested
+        }
+
         ext.publications.all {
             apiKey.convention(
                 project.providers.gradleProperty("io.papermc.hangar-publish-plugin.$name.api-key")
@@ -46,13 +52,17 @@ class HangarPublishPlugin : Plugin<Project> {
             )
             apiEndpoint.convention(PAPER_HANGAR_API)
 
-            project.tasks.register<HangarPublishTask>(taskName()) {
+            val publishTask = project.tasks.register<HangarPublishTask>(taskName()) {
                 group = TASK_GROUP
                 description = "Publishes the '${this@all.name}' publication to Hangar."
                 outputs.upToDateWhen { false } // always run when requested
                 auth.set(authService)
                 usesService(authService)
                 publication.set(this@all)
+            }
+
+            publishAll.configure {
+                dependsOn(publishTask)
             }
         }
     }
