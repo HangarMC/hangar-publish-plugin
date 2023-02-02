@@ -16,6 +16,7 @@
  */
 package io.papermc.hangarpublishplugin.model
 
+import io.papermc.hangarpublishplugin.util.DelegatingPolymorphicDomainObjectContainer
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.PolymorphicDomainObjectContainer
@@ -27,7 +28,7 @@ import org.gradle.api.provider.Provider
  *
  * Supports registering [DependencyDetails.Url] and [DependencyDetails.Hangar].
  */
-interface PlatformDependencyContainer : PolymorphicDomainObjectContainer<DependencyDetails> {
+interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContainer<DependencyDetails> {
     /**
      * Registers a [DependencyDetails.Url] without any extra configuration.
      *

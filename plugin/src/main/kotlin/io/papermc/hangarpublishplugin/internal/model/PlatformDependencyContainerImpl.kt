@@ -27,10 +27,10 @@ import org.gradle.kotlin.dsl.register
 import javax.inject.Inject
 
 abstract class PlatformDependencyContainerImpl @Inject constructor(
-    private val dependencies: PolymorphicDomainObjectContainer<DependencyDetails>,
+    override val backingContainer: PolymorphicDomainObjectContainer<DependencyDetails>,
     private val providers: ProviderFactory
 ) : PlatformDependencyContainer,
-    PolymorphicDomainObjectContainer<DependencyDetails> by dependencies {
+    PolymorphicDomainObjectContainer<DependencyDetails> by backingContainer {
     override fun url(name: String, url: String): NamedDomainObjectProvider<DependencyDetails.Url> =
         url(name, url) {}
 
@@ -41,7 +41,7 @@ abstract class PlatformDependencyContainerImpl @Inject constructor(
         url(name, url) {}
 
     override fun url(name: String, url: Provider<String>, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        dependencies.register<DependencyDetails.Url>(name) {
+        register<DependencyDetails.Url>(name) {
             this.url.set(url)
             this.url.disallowChanges()
             op.execute(this)
@@ -57,7 +57,7 @@ abstract class PlatformDependencyContainerImpl @Inject constructor(
         hangar(owner, slug) {}
 
     override fun hangar(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        dependencies.register<DependencyDetails.Hangar>(dummyDependencyName()) {
+        register<DependencyDetails.Hangar>(dummyDependencyName()) {
             this.owner.set(owner)
             this.owner.disallowChanges()
             this.slug.set(slug)
@@ -67,7 +67,7 @@ abstract class PlatformDependencyContainerImpl @Inject constructor(
 
     private fun dummyDependencyName(): String {
         val prefix = "hangarManagedDependency"
-        val existingOfType = dependencies.names.filter {
+        val existingOfType = names.filter {
             it.startsWith(prefix) && it.substringAfter(prefix).toIntOrNull() != null
         }.size
         return prefix + existingOfType
