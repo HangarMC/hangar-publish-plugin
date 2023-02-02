@@ -17,67 +17,24 @@
 package io.papermc.hangarpublishplugin.internal.model
 
 import io.papermc.hangarpublishplugin.model.DependencyDetails
+import io.papermc.hangarpublishplugin.model.PlatformDependencyContainer
 import io.papermc.hangarpublishplugin.model.PlatformDetails
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.Nested
 import org.gradle.kotlin.dsl.polymorphicDomainObjectContainer
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.registerBinding
 import javax.inject.Inject
 
 abstract class PlatformDetailsImpl @Inject constructor(
     override val name: String,
-    private val providers: ProviderFactory,
     objects: ObjectFactory
 ) : PlatformDetails {
-    override val dependencies: PolymorphicDomainObjectContainer<DependencyDetails> = objects.polymorphicDomainObjectContainer(DependencyDetails::class).also {
+    @get:Nested
+    val dependencyContainer: PolymorphicDomainObjectContainer<DependencyDetails> = objects.polymorphicDomainObjectContainer(DependencyDetails::class).also {
         it.registerBinding(DependencyDetails.Hangar::class, AbstractDependencyDetails.HangarDependencyDetails::class)
         it.registerBinding(DependencyDetails.Url::class, AbstractDependencyDetails.UrlDependencyDetails::class)
     }
 
-    override fun urlDependency(name: String, url: String): NamedDomainObjectProvider<DependencyDetails.Url> =
-        urlDependency(name, url) {}
-
-    override fun urlDependency(name: String, url: String, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        urlDependency(name, providers.provider { url }, op)
-
-    override fun urlDependency(name: String, url: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        urlDependency(name, url) {}
-
-    override fun urlDependency(name: String, url: Provider<String>, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        dependencies.register<DependencyDetails.Url>(name) {
-            this.url.set(url)
-            this.url.disallowChanges()
-            op.execute(this)
-        }
-
-    override fun hangarDependency(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangarDependency(owner, slug) {}
-
-    override fun hangarDependency(owner: String, slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangarDependency(providers.provider { owner }, providers.provider { slug }, op)
-
-    override fun hangarDependency(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangarDependency(owner, slug) {}
-
-    override fun hangarDependency(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        dependencies.register<DependencyDetails.Hangar>(dummyDependencyName()) {
-            this.owner.set(owner)
-            this.owner.disallowChanges()
-            this.slug.set(slug)
-            this.slug.disallowChanges()
-            op.execute(this)
-        }
-
-    private fun dummyDependencyName(): String {
-        val prefix = "hangarManagedDependency"
-        val existingOfType = dependencies.names.filter {
-            it.startsWith(prefix) && it.substringAfter(prefix).toIntOrNull() != null
-        }.size
-        return prefix + existingOfType
-    }
+    override val dependencies: PlatformDependencyContainer = objects.newInstance(PlatformDependencyContainerImpl::class.java, dependencyContainer)
 }

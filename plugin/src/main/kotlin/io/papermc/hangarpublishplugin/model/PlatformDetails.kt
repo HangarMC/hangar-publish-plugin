@@ -18,16 +18,12 @@ package io.papermc.hangarpublishplugin.model
 
 import io.papermc.hangarpublishplugin.HangarPublishExtension
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectProvider
-import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
 /**
@@ -69,88 +65,16 @@ interface PlatformDetails {
 
     /**
      * Container for [DependencyDetails] of this platform.
-     *
-     * Supports registering [DependencyDetails.Url] and [DependencyDetails.Hangar].
-     *
-     * The [urlDependency] and [hangarDependency] convenience methods
-     * are provided to simplify registrations.
      */
-    @get:Nested
-    val dependencies: PolymorphicDomainObjectContainer<DependencyDetails>
+    @get:Internal
+    val dependencies: PlatformDependencyContainer
 
     /**
-     * Registers a [DependencyDetails.Url] without any extra configuration.
+     * Configures [dependencies] with [op].
      *
-     * @param name dependency name
-     * @param url dependency URL
-     * @return registration provider
-     */
-    fun urlDependency(name: String, url: String): NamedDomainObjectProvider<DependencyDetails.Url>
-
-    /**
-     * Registers a [DependencyDetails.Url], configuring it with the provided action.
-     *
-     * @param name dependency name
-     * @param url dependency URL
      * @param op configuration action
-     * @return registration provider
      */
-    fun urlDependency(name: String, url: String, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url>
-
-    /**
-     * Registers a [DependencyDetails.Url] without any extra configuration.
-     *
-     * @param name dependency name
-     * @param url dependency URL
-     * @return registration provider
-     */
-    fun urlDependency(name: String, url: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Url>
-
-    /**
-     * Registers a [DependencyDetails.Url], configuring it with the provided action.
-     *
-     * @param name dependency name
-     * @param url dependency URL
-     * @param op configuration action
-     * @return registration provider
-     */
-    fun urlDependency(name: String, url: Provider<String>, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url>
-
-    /**
-     * Registers a [DependencyDetails.Hangar] without any extra configuration.
-     *
-     * @param owner dependency owner
-     * @param slug dependency slug
-     * @return registration provider
-     */
-    fun hangarDependency(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar>
-
-    /**
-     * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
-     *
-     * @param owner dependency owner
-     * @param slug dependency slug
-     * @param op configuration action
-     * @return registration provider
-     */
-    fun hangarDependency(owner: String, slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
-
-    /**
-     * Registers a [DependencyDetails.Hangar] without any extra configuration.
-     *
-     * @param owner dependency owner
-     * @param slug dependency slug
-     * @return registration provider
-     */
-    fun hangarDependency(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar>
-
-    /**
-     * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
-     *
-     * @param owner dependency owner
-     * @param slug dependency slug
-     * @param op configuration action
-     * @return registration provider
-     */
-    fun hangarDependency(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun dependencies(op: Action<PlatformDependencyContainer>) {
+        op.execute(dependencies)
+    }
 }

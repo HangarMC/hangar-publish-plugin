@@ -43,10 +43,12 @@ interface HangarPublishExtension {
      *             register(Platforms.PAPER) {
      *                 jar.set(tasks.jar.flatMap { it.archiveFile })
      *                 platformVersions.set(listOf("1.18", "1.19"))
-     *                 hangarDependency("Someone", "Something") {
-     *                     required.set(false)
+     *                 dependencies {
+     *                     hangar("Someone", "Something") {
+     *                         required.set(false)
+     *                     }
+     *                     url("Some Dependency", "https://dependency-plugin-website.com/")
      *                 }
-     *                 urlDependency("Some Dependency", "https://dependency-plugin-website.com/")
      *             }
      *         }
      *     }

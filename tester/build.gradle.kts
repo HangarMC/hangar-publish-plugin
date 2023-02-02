@@ -36,14 +36,16 @@ hangarPublish {
             register(Platforms.PAPER) {
                 jar.set(paper)
                 platformVersions.set(listOf("1.18", "1.19"))
-                hangarDependency("kennytv", "Test1") {
-                    required.set(false)
+                dependencies {
+                    hangar("kennytv", "Test1") {
+                        required.set(false)
+                    }
                 }
             }
             register(Platforms.WATERFALL) {
                 jar.set(waterfall)
                 platformVersions.set(listOf("1.19"))
-                urlDependency("Google", "https://google.com")
+                dependencies.url("Google", "https://google.com")
             }
             register(Platforms.VELOCITY) {
                 jar.set(velocity)
