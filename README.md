@@ -21,8 +21,7 @@ plugins {
 hangarPublish {
     publications.register("plugin") {
         version.set(project.version as String) // use project version as publication version
-        owner.set("hangar-user")
-        slug.set("hangar-project")
+        namespace("hangar-user", "hangar-project")
         channel.set("Release")
         changelog.set("Removed Herobrine") // optional
 
@@ -60,8 +59,7 @@ plugins {
 hangarPublish {
     publications.register("plugin") {
         version.set(project.version as String) // use project version as publication version
-        owner.set("hangar-user")
-        slug.set("hangar-project")
+        namespace("hangar-user", "hangar-project")
         channel.set("Release")
         changelog.set("Removed Herobrine") // optional
 

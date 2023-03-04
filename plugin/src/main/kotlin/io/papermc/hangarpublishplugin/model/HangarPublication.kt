@@ -17,8 +17,10 @@
 package io.papermc.hangarpublishplugin.model
 
 import io.papermc.hangarpublishplugin.HangarPublishExtension
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
@@ -101,4 +103,35 @@ interface HangarPublication {
      */
     @get:Nested
     val platforms: NamedDomainObjectContainer<PlatformDetails>
+
+    /**
+     * Configures [platforms] with [op].
+     *
+     * @param op configuration action
+     */
+    fun platforms(op: Action<NamedDomainObjectContainer<PlatformDetails>>) {
+        op.execute(platforms)
+    }
+
+    /**
+     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
+     *
+     * @param owner owner
+     * @param slug slug
+     */
+    fun namespace(owner: String, slug: String) {
+        this.owner.set(owner)
+        this.slug.set(slug)
+    }
+
+    /**
+     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
+     *
+     * @param owner owner
+     * @param slug slug
+     */
+    fun namespace(owner: Provider<String>, slug: Provider<String>) {
+        this.owner.set(owner)
+        this.slug.set(slug)
+    }
 }
