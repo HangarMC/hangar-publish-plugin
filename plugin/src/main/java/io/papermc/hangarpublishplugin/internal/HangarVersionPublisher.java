@@ -80,7 +80,9 @@ public final class HangarVersionPublisher {
                 return true;
             });
 
-            if (!success) {
+            if (success) {
+                LOGGER.lifecycle("Successfully uploaded {}/{} version {} to Hangar API endpoint: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getApiEndpoint().get());
+            } else {
                 throw new RuntimeException("Error uploading version");
             }
         }
