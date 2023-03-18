@@ -81,7 +81,7 @@ public final class HangarVersionPublisher {
             });
 
             if (success) {
-                LOGGER.lifecycle("Successfully uploaded {}/{} version {} to Hangar API endpoint: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getVersion().get(), publication.getApiEndpoint().get());
+                LOGGER.lifecycle("Successfully published {}/{} version {} to Hangar API endpoint: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getVersion().get(), publication.getApiEndpoint().get());
             } else {
                 throw new RuntimeException("Error uploading version");
             }
