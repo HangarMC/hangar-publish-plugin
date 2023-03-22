@@ -30,7 +30,7 @@ interface DependencyDetails : Named {
      *
      * - For [Url] dependencies, the name will be displayed on Hangar under the dependencies section.
      * - For [Hangar] dependencies, the name is not used for display purposes as this information
-     *   is fetched from the references Hangar project instead.
+     *   is fetched from the referenced Hangar project instead.
      *
      * @see [Named.getName]
      */

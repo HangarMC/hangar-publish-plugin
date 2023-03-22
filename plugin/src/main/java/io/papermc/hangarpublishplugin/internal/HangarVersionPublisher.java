@@ -18,10 +18,12 @@ package io.papermc.hangarpublishplugin.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.papermc.hangarpublishplugin.HangarAuthService;
 import io.papermc.hangarpublishplugin.model.HangarPublication;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -31,8 +33,10 @@ import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
+import org.jetbrains.annotations.Nullable;
 
 public final class HangarVersionPublisher {
 
@@ -72,16 +76,16 @@ public final class HangarVersionPublisher {
             final HangarAuthorizationToken jwt = this.auth.jwt(client, publication.getApiEndpoint().get(), publication.getApiKey().get());
             post.addHeader("Authorization", jwt.getJwt());
 
-            final boolean success = client.execute(post, response -> {
+            final @Nullable String result = client.execute(post, response -> {
                 if (response.getCode() != 200) {
                     LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), ErrorResponseParser.parseErrorMessage(response));
-                    return false;
+                    return null;
                 }
-                return true;
+                return GSON.fromJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8), JsonObject.class).get("url").getAsString();
             });
 
-            if (success) {
-                LOGGER.lifecycle("Successfully published {}/{} version {} to Hangar API endpoint: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getVersion().get(), publication.getApiEndpoint().get());
+            if (result != null) {
+                LOGGER.lifecycle("Successfully published {}/{} version {} to Hangar: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getVersion().get(), result);
             } else {
                 throw new RuntimeException("Error uploading version");
             }
