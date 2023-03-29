@@ -149,17 +149,24 @@ interface HangarPublication {
      *
      * Example configuration:
      * ```
-     * pages {
-     *     // Default resource page:
-     *     resourcePage("# My Resource")
-     *     // or
-     *     resourcePage(provider { file("README.md").readText() })
+     * hangarPublish {
+     *     publications.register("MyPublication") {
+     *         // other publication configuration...
+     *         // (see HangarPublishExtension#publications docs)
      *
-     *     // Custom page:
-     *     register("Custom-Page") {
-     *         content.set("# My Resource")
-     *         // or
-     *         content.set(provider { file("README.md").readText() })
+     *         pages {
+     *             // Default resource page:
+     *             resourcePage("# My Resource")
+     *             // or
+     *             resourcePage(provider { file("README.md").readText() })
+     *
+     *             // Custom page:
+     *             register("Custom-Page") {
+     *                 content.set("# My Resource")
+     *                 // or
+     *                 content.set(provider { file("README.md").readText() })
+     *             }
+     *         }
      *     }
      * }
      * ```
