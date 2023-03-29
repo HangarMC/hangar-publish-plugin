@@ -112,6 +112,8 @@ class HangarPublishPlugin : Plugin<Project> {
                 owner.set(publication.owner)
                 slug.set(publication.slug)
                 page.set(thisPage)
+                apiKey.set(publication.apiKey)
+                apiEndpoint.set(publication.apiEndpoint)
             }
             syncAllTask.configure {
                 dependsOn(syncTask)

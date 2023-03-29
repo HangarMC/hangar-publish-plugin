@@ -39,6 +39,12 @@ abstract class PageSyncTask : DefaultTask() {
     @get:Nested
     abstract val page: Property<ProjectPage>
 
+    @get:Input
+    abstract val apiEndpoint: Property<String>
+
+    @get:Input
+    abstract val apiKey: Property<String>
+
     @TaskAction
     fun run() {
         error("not implemented yet")
