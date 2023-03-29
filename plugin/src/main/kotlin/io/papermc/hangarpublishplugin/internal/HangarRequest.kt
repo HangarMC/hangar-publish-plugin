@@ -38,7 +38,7 @@ fun <T : ClassicHttpRequest> send(
     HttpClients.createDefault().use { client ->
         val entity = entitySupplier.invoke(apiEndpoint + methodEndpoint)
         val jwt = auth.jwt(client, apiEndpoint, apiKey)
-        entity.addHeader(HttpHeaders.AUTHORIZATION, jwt)
+        entity.addHeader(HttpHeaders.AUTHORIZATION, jwt.jwt)
 
         entityConsumer.invoke(entity)
         client.execute(entity) { response ->
