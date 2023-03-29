@@ -17,6 +17,7 @@
 package io.papermc.hangarpublishplugin.model
 
 import io.papermc.hangarpublishplugin.HangarPublishExtension
+import io.papermc.hangarpublishplugin.PageSyncTask
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
@@ -140,7 +141,28 @@ interface HangarPublication {
     }
 
     /**
-     * Container for [ProjectPage]s of this platform.
+     * Container for [ProjectPage]s of this publication's project.
+     *
+     * hangar-publish-plugin will automatically register [PageSyncTask]s
+     * named in the format `sync<CapitalizedPublicationName>Publication<CapitalizedPageName>PageToHangar`
+     * for each registered publication.
+     *
+     * Example configuration:
+     * ```
+     * pages {
+     *     // Default resource page:
+     *     resourcePage("# My Resource")
+     *     // or
+     *     resourcePage(provider { file("README.md").readText() })
+     *
+     *     // Custom page:
+     *     register("Custom-Page") {
+     *         content.set("# My Resource")
+     *         // or
+     *         content.set(provider { file("README.md").readText() })
+     *     }
+     * }
+     * ```
      */
     @get:Internal
     val pages: ProjectPageContainer

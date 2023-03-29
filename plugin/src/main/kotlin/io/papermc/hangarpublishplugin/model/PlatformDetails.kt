@@ -40,7 +40,9 @@ interface PlatformDetails {
         get() = name
 
     /**
-     * List of supported platform versions, i.e. `listOf("1.18", "1.19")`.
+     * List of supported platform versions, i.e. `listOf("1.19.3", "1.19.4")`.
+     *
+     * Can also be a version range or wildcard, i.e. `listOf("1.19.x")` or `listOf("1.18-1.19.4")`.
      */
     @get:Input
     val platformVersions: ListProperty<String>
