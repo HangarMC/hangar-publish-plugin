@@ -16,26 +16,28 @@
  */
 package io.papermc.hangarpublishplugin.internal.model
 
-import io.papermc.hangarpublishplugin.model.HangarPublication
-import io.papermc.hangarpublishplugin.model.PlatformDetails
 import io.papermc.hangarpublishplugin.model.ProjectPage
 import io.papermc.hangarpublishplugin.model.ProjectPageContainer
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Nested
-import org.gradle.kotlin.dsl.domainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.provider.Provider
 import javax.inject.Inject
 
-abstract class HangarPublicationImpl @Inject constructor(
-    override val name: String,
-    objects: ObjectFactory
-) : HangarPublication {
-    @Suppress("unchecked_cast") // GH:gradle/gradle#23655
-    override val platforms: NamedDomainObjectContainer<PlatformDetails> =
-        objects.domainObjectContainer(PlatformDetailsImpl::class.java) as NamedDomainObjectContainer<PlatformDetails>
+abstract class ProjectPageContainerImpl @Inject constructor(
+    override val backingContainer: NamedDomainObjectContainer<ProjectPage>
+) : ProjectPageContainer,
+    NamedDomainObjectContainer<ProjectPage> by backingContainer {
+    companion object {
+        const val RESOURCE_PAGE_ID = "Resource-Page"
+    }
 
-    @get:Nested
-    val pageContainer: NamedDomainObjectContainer<ProjectPage> = objects.domainObjectContainer(ProjectPage::class)
+    override fun resourcePage(content: String): NamedDomainObjectProvider<ProjectPage> = register(RESOURCE_PAGE_ID) {
+        this.content.set(content)
+    }
 
-    override val pages: ProjectPageContainer = objects.newInstance(ProjectPageContainerImpl::class.java, pageContainer)
+    override fun resourcePage(content: Provider<String>): NamedDomainObjectProvider<ProjectPage> = register(RESOURCE_PAGE_ID) {
+        this.content.set(content)
+    }
+
+    override fun resourcePage(): NamedDomainObjectProvider<ProjectPage> = named(RESOURCE_PAGE_ID)
 }

@@ -59,7 +59,7 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
 
     private fun handleResponse(response: ClassicHttpResponse): HangarAuthorizationToken? {
         if (response.code != 200) {
-            LOGGER.error("Error requesting JWT, returned {}: {}", response.code, ErrorResponseParser.parseErrorMessage(response))
+            LOGGER.error("Error requesting JWT, returned {}: {}", response.code, ErrorResponseParser.parse(response))
             return null
         }
         val json = EntityUtils.toString(response.entity, Charsets.UTF_8)

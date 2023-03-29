@@ -16,17 +16,17 @@
  */
 package io.papermc.hangarpublishplugin.util
 
-import org.gradle.api.PolymorphicDomainObjectContainer
+import org.gradle.api.NamedDomainObjectContainer
 
 /**
- * Delegating [PolymorphicDomainObjectContainer].
+ * Delegating [NamedDomainObjectContainer].
  */
-interface DelegatingPolymorphicDomainObjectContainer<T> : DelegatingNamedDomainObjectContainer<T>, PolymorphicDomainObjectContainer<T> {
+interface DelegatingNamedDomainObjectContainer<T> : NamedDomainObjectContainer<T> {
     /**
-     * The backing [PolymorphicDomainObjectContainer] wrapped by this [DelegatingPolymorphicDomainObjectContainer].
+     * The backing [NamedDomainObjectContainer] wrapped by this [DelegatingNamedDomainObjectContainer].
      *
-     * [PolymorphicDomainObjectContainer] is annotated with [org.gradle.internal.HasInternalProtocol],
+     * [NamedDomainObjectContainer] is annotated with [org.gradle.internal.HasInternalProtocol],
      * so in some situations a plugin-implemented wrapper may not be suitable.
      */
-    override val backingContainer: PolymorphicDomainObjectContainer<T>
+    val backingContainer: NamedDomainObjectContainer<T>
 }
