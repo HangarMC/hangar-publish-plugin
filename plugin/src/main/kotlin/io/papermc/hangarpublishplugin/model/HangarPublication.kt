@@ -145,7 +145,7 @@ interface HangarPublication {
      *
      * hangar-publish-plugin will automatically register [PageSyncTask]s
      * named in the format `sync<CapitalizedPublicationName>Publication<CapitalizedPageName>PageToHangar`
-     * for each registered publication.
+     * for each registered page.
      *
      * Example configuration:
      * ```
