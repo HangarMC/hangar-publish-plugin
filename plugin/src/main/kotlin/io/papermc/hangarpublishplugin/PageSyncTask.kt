@@ -16,7 +16,11 @@
  */
 package io.papermc.hangarpublishplugin
 
+import com.google.gson.JsonObject
+import io.papermc.hangarpublishplugin.internal.addBody
+import io.papermc.hangarpublishplugin.internal.send
 import io.papermc.hangarpublishplugin.model.ProjectPage
+import org.apache.hc.client5.http.classic.methods.HttpPatch
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -47,6 +51,13 @@ abstract class PageSyncTask : DefaultTask() {
 
     @TaskAction
     fun run() {
-        error("not implemented yet")
+        val methodEndpoint = "pages/edit/${owner.get()}/${slug.get()}"
+        send(this.auth.get(), this.apiEndpoint.get(), methodEndpoint, this.apiKey.get(), ::HttpPatch) { entity ->
+            val body = JsonObject()
+            val page = this.page.get()
+            body.addProperty("path", page.name)
+            body.addProperty("content", page.content.get())
+            addBody(entity, body)
+        };
     }
 }

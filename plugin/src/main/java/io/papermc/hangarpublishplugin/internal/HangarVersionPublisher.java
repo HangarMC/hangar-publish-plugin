@@ -40,8 +40,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class HangarVersionPublisher {
 
+    public static final Gson GSON = new GsonBuilder().create();
     private static final Logger LOGGER = Logging.getLogger(HangarVersionPublisher.class);
-    private static final Gson GSON = new GsonBuilder().create();
 
     private final HangarAuthService auth;
 
