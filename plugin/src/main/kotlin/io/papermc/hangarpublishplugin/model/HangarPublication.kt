@@ -162,9 +162,9 @@ interface HangarPublication {
      *
      *             // Custom page:
      *             register("Custom-Page") {
-     *                 content.set("# My Resource")
+     *                 content.set("# Some custom page header")
      *                 // or
-     *                 content.set(provider { file("README.md").readText() })
+     *                 content.set(provider { file("MY_PAGE.md").readText() })
      *             }
      *         }
      *     }
