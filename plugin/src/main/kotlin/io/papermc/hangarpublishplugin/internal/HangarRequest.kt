@@ -43,7 +43,7 @@ fun <T : ClassicHttpRequest> send(
         entityConsumer.invoke(entity)
         client.execute(entity) { response ->
             if (response.code != 200) {
-                logger.error("Error using endpoint '{}', returned {}: {}", apiEndpoint, response.code, ErrorResponseParser.parse(response))
+                logger.error("Error using endpoint '{}', returned {}: {}", methodEndpoint, response.code, ErrorResponseParser.parse(response))
             }
         }
     }
