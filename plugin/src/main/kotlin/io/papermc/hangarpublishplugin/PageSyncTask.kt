@@ -58,6 +58,6 @@ abstract class PageSyncTask : DefaultTask() {
             body.addProperty("path", page.name)
             body.addProperty("content", page.content.get())
             addBody(entity, body)
-        };
+        }
     }
 }

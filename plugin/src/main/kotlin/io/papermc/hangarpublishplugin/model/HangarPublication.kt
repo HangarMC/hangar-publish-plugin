@@ -53,6 +53,9 @@ interface HangarPublication {
      *
      * In order to publish versions the provided key will need the following permissions:
      *  - `create_version`
+     *
+     * In order to sync project pages, the following permissions are also needed:
+     *  - `edit_page`
      */
     @get:Input
     val apiKey: Property<String>
