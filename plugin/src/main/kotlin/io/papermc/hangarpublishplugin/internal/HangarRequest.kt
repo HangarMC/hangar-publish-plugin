@@ -50,7 +50,7 @@ fun <T : ClassicHttpRequest> send(
     }
 }
 
-fun addBody(entity: ClassicHttpRequest, body: JsonElement) {
-    entity.addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-    entity.entity = StringEntity(HangarAuthService.GSON.toJson(body), StandardCharsets.UTF_8)
+fun ClassicHttpRequest.addBody(body: JsonElement) {
+    addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+    entity = StringEntity(HangarAuthService.GSON.toJson(body), StandardCharsets.UTF_8)
 }

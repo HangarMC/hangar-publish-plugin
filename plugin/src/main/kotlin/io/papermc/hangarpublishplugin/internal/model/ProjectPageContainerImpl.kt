@@ -28,7 +28,7 @@ abstract class ProjectPageContainerImpl @Inject constructor(
 ) : ProjectPageContainer,
     NamedDomainObjectContainer<ProjectPage> by backingContainer {
     companion object {
-        const val RESOURCE_PAGE_ID = "Resource-Page"
+        const val RESOURCE_PAGE_ID = "MainResourcePage"
     }
 
     override fun resourcePage(content: String): NamedDomainObjectProvider<ProjectPage> = register(RESOURCE_PAGE_ID) {
