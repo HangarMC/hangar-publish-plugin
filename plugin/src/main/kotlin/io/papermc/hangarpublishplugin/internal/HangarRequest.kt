@@ -32,16 +32,16 @@ fun <T : ClassicHttpRequest> send(
     apiEndpoint: String,
     methodEndpoint: String,
     apiKey: String,
-    entitySupplier: (String) -> T,
-    entityConsumer: (T) -> Unit
+    entityFactory: (String) -> T,
+    entityDecorator: (T) -> Unit
 ) {
     HttpClients.createDefault().use { client ->
         val endpoint = apiEndpoint + methodEndpoint
-        val entity = entitySupplier.invoke(endpoint)
+        val entity = entityFactory(endpoint)
         val jwt = auth.jwt(client, apiEndpoint, apiKey)
         entity.addHeader(HttpHeaders.AUTHORIZATION, jwt.jwt)
 
-        entityConsumer.invoke(entity)
+        entityDecorator(entity)
         client.execute(entity) { response ->
             if (response.code != 200) {
                 logger.error("Error using endpoint '{}', returned {}: {}", endpoint, response.code, ErrorResponseParser.parse(response))
