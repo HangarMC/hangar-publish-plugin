@@ -35,7 +35,7 @@ hangarPublish {
         platforms {
             register(Platforms.PAPER) {
                 jar.set(paper)
-                platformVersions.set(listOf("1.18", "1.19"))
+                platformVersions.set(listOf("1.17-1.19"))
                 dependencies {
                     hangar("kennytv", "Test1") {
                         required.set(false)
@@ -52,5 +52,13 @@ hangarPublish {
                 platformVersions.set(listOf("3.1"))
             }
         }
+
+        pages.resourcePage("""
+            # My Epic Resource Page
+
+            ## Epic Features
+            - does nothing
+            - tests hangar
+        """.trimIndent())
     }
 }

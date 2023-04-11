@@ -17,11 +17,13 @@
 package io.papermc.hangarpublishplugin.model
 
 import io.papermc.hangarpublishplugin.HangarPublishExtension
+import io.papermc.hangarpublishplugin.PageSyncTask
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
@@ -52,6 +54,9 @@ interface HangarPublication {
      *
      * In order to publish versions the provided key will need the following permissions:
      *  - `create_version`
+     *
+     * In order to sync project pages, the following permissions are also needed:
+     *  - `edit_page`
      */
     @get:Input
     val apiKey: Property<String>
@@ -133,5 +138,48 @@ interface HangarPublication {
     fun namespace(owner: Provider<String>, slug: Provider<String>) {
         this.owner.set(owner)
         this.slug.set(slug)
+    }
+
+    /**
+     * Container for [ProjectPage]s of this publication's project.
+     *
+     * hangar-publish-plugin will automatically register [PageSyncTask]s
+     * named in the format `sync<CapitalizedPublicationName>Publication<CapitalizedPageName>PageToHangar`
+     * for each registered page.
+     *
+     * Example configuration:
+     * ```
+     * hangarPublish {
+     *     publications.register("MyPublication") {
+     *         // other publication configuration...
+     *         // (see HangarPublishExtension#publications docs)
+     *
+     *         pages {
+     *             // Default resource page:
+     *             resourcePage("# My Resource")
+     *             // or
+     *             resourcePage(provider { file("README.md").readText() })
+     *
+     *             // Custom page:
+     *             register("Custom-Page") {
+     *                 content.set("# Some custom page header")
+     *                 // or
+     *                 content.set(provider { file("MY_PAGE.md").readText() })
+     *             }
+     *         }
+     *     }
+     * }
+     * ```
+     */
+    @get:Internal
+    val pages: ProjectPageContainer
+
+    /**
+     * Configures [pages] with [op].
+     *
+     * @param op configuration action
+     */
+    fun pages(op: Action<ProjectPageContainer>) {
+        op.execute(pages)
     }
 }

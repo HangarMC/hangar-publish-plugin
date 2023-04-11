@@ -40,8 +40,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class HangarVersionPublisher {
 
+    public static final Gson GSON = new GsonBuilder().create();
     private static final Logger LOGGER = Logging.getLogger(HangarVersionPublisher.class);
-    private static final Gson GSON = new GsonBuilder().create();
 
     private final HangarAuthService auth;
 
@@ -78,7 +78,7 @@ public final class HangarVersionPublisher {
 
             final @Nullable String result = client.execute(post, response -> {
                 if (response.getCode() != 200) {
-                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), ErrorResponseParser.parseErrorMessage(response));
+                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), ErrorResponseParser.parse(response));
                     return null;
                 }
                 return GSON.fromJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8), JsonObject.class).get("url").getAsString();

@@ -31,7 +31,7 @@ public final class ErrorResponseParser {
     private static final Gson GSON = new GsonBuilder().create();
     private static final String FORMAT = "(%d) %s ";
 
-    public static String parseErrorMessage(final ClassicHttpResponse response) {
+    public static String parse(final ClassicHttpResponse response) {
         final JsonObject object;
         try {
             object = GSON.fromJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8), JsonObject.class);

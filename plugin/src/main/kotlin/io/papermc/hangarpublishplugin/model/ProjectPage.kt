@@ -14,19 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.papermc.hangarpublishplugin.internal;
+package io.papermc.hangarpublishplugin.model
 
-final class HangarProjectNamespace {
-    private final String owner;
-    private final String slug;
+import org.gradle.api.Named
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 
-    public HangarProjectNamespace(final String owner, final String slug) {
-        this.owner = owner;
-        this.slug = slug;
-    }
+/**
+ * A page of a Hangar project.
+ */
+interface ProjectPage : Named {
+    /**
+     * The name of this [ProjectPage], used when uploading to Hangar.
+     *
+     * @see [Named.getName]
+     */
+    @Input
+    override fun getName(): String
 
-    @Override
-    public String toString() {
-        return this.owner + "/" + this.slug;
-    }
+    /**
+     * The content to set the page to.
+     */
+    @get:Input
+    val content: Property<String>
 }
