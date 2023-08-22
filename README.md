@@ -74,7 +74,9 @@ hangarPublish {
                 platformVersions.set(["1.19.3"])
 
                 // Groovy resolves `dependencies` on Project instead of on PlatformDetails, so we can't use the block DSL like in Kotlin.
-                dependencies.hangar("kennytv", "Test1")
+                dependencies.hangar("kennytv", "Test1") {
+                    required.set(false)
+                }
             }
         }
     }
@@ -83,6 +85,9 @@ hangarPublish {
 </details>
 
 Once you have configured your publication(s), you can publish them with the `publishAllPublicationsToHangar` or `publish[CapitalizedPublicationName]PublicationToHangar` tasks.
+
+## Automating Publishing
+See [our docs page on how to set up automatic build publishing via Github Actions](https://docs.papermc.io/misc/hangar-publishing).
 
 ## Note
 hangar-publish-plugin is still in the early stages (pre-1.0). This means things are still subject to change (possibly in breaking ways). Because of this there is not yet documentation beyond the JavaDoc and this README. If you need help with the plugin, feel free to ask in `#build-tooling-help` on the [Paper discord](https://discord.gg/papermc).
