@@ -28,8 +28,7 @@ hangarPublish {
     publications.register("publishPluginTest") {
         apiEndpoint.set("https://hangar.papermc.dev/api/v1/") // staging
         version.set(System.currentTimeMillis().toString())
-        owner.set("hangarPublishPlugin")
-        slug.set("test-project")
+        id.set("test-project")
         channel.set("Release")
         changelog.set("Removed Herobrine")
         platforms {
@@ -37,7 +36,7 @@ hangarPublish {
                 jar.set(paper)
                 platformVersions.set(listOf("1.17-1.19"))
                 dependencies {
-                    hangar("kennytv", "Test1") {
+                    hangar("WonderfulProject") {
                         required.set(false)
                     }
                 }

@@ -70,38 +70,34 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
      *
-     * @param owner dependency owner
-     * @param slug dependency slug
+     * @param id dependency project id
      * @return registration provider
      */
-    fun hangar(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: String): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
      *
-     * @param owner dependency owner
-     * @param slug dependency slug
+     * @param id dependency project id
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(owner: String, slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
      *
-     * @param owner dependency owner
-     * @param slug dependency slug
+     * @param id dependency project id
      * @return registration provider
      */
-    fun hangar(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
      *
-     * @param owner dependency owner
-     * @param slug dependency slug
+     * @param id dependency project id
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 }

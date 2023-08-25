@@ -21,7 +21,6 @@ import io.papermc.hangarpublishplugin.PageSyncTask
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -68,16 +67,10 @@ interface HangarPublication {
     val name: String
 
     /**
-     * The owner (user or organization) of the Hangar project this publication is for.
+     * The id of the Hangar project this publication is for.
      */
     @get:Input
-    val owner: Property<String>
-
-    /**
-     * The slug/id of the Hangar project this publication is for.
-     */
-    @get:Input
-    val slug: Property<String>
+    val id: Property<String>
 
     /**
      * The version for this publication.
@@ -116,28 +109,6 @@ interface HangarPublication {
      */
     fun platforms(op: Action<NamedDomainObjectContainer<PlatformDetails>>) {
         op.execute(platforms)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
-     *
-     * @param owner owner
-     * @param slug slug
-     */
-    fun namespace(owner: String, slug: String) {
-        this.owner.set(owner)
-        this.slug.set(slug)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
-     *
-     * @param owner owner
-     * @param slug slug
-     */
-    fun namespace(owner: Provider<String>, slug: Provider<String>) {
-        this.owner.set(owner)
-        this.slug.set(slug)
     }
 
     /**

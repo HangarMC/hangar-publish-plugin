@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Nullable;
@@ -90,14 +91,13 @@ final class HangarVersion {
     private static final class PluginDependency {
         private final String name;
         private final boolean required;
-        private final @Nullable HangarProjectNamespace namespace;
         private final @Nullable String externalUrl;
 
         private static PluginDependency create(
-            final HangarProjectNamespace namespace,
+            final String projectId,
             final boolean required
         ) {
-            return new PluginDependency(null, required, namespace, null);
+            return new PluginDependency(projectId, required, null);
         }
 
         private static PluginDependency create(
@@ -105,21 +105,16 @@ final class HangarVersion {
             final String externalUrl,
             final boolean required
         ) {
-            return new PluginDependency(name, required, null, externalUrl);
+            return new PluginDependency(name, required, externalUrl);
         }
 
         private PluginDependency(
             final String name,
             final boolean required,
-            @Nullable final HangarProjectNamespace namespace,
             @Nullable final String externalUrl
         ) {
-            if (namespace == null && externalUrl == null) {
-                throw new IllegalArgumentException("Either a Hangar namespace or an external url needs to be defined");
-            }
-            this.name = name;
+            this.name = Objects.requireNonNull(name, "Plugin dependency id/name needs to be provided");
             this.required = required;
-            this.namespace = namespace;
             this.externalUrl = externalUrl;
         }
 
@@ -147,7 +142,7 @@ final class HangarVersion {
 
         private static PluginDependency fromHangarDependencyDetails(final DependencyDetails.Hangar details) {
             return PluginDependency.create(
-                new HangarProjectNamespace(details.getOwner().get(), details.getSlug().get()),
+                details.getId().get(),
                 details.getRequired().get()
             );
         }

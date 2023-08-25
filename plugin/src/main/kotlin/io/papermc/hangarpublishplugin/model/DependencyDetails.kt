@@ -48,16 +48,10 @@ interface DependencyDetails : Named {
      */
     interface Hangar : DependencyDetails {
         /**
-         * The owner (user or organization) of the Hangar project dependency.
+         * The id of the Hangar project dependency.
          */
         @get:Input
-        val owner: Property<String>
-
-        /**
-         * The slug/id of the Hangar project dependency.
-         */
-        @get:Input
-        val slug: Property<String>
+        val id: Property<String>
     }
 
     /**

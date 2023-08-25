@@ -21,7 +21,7 @@ plugins {
 hangarPublish {
     publications.register("plugin") {
         version.set(project.version as String) // use project version as publication version
-        namespace("hangar-user", "hangar-project")
+        id.set("hangar-project")
         channel.set("Release")
         changelog.set("Removed Herobrine") // optional
 
@@ -35,7 +35,7 @@ hangarPublish {
                 jar.set(tasks.jar.flatMap { it.archiveFile })
                 platformVersions.set(listOf("1.19.3"))
                 dependencies {
-                    hangar("kennytv", "Test1") {
+                    hangar("TestProject") {
                         required.set(false)
                     }
                 }
@@ -59,7 +59,7 @@ plugins {
 hangarPublish {
     publications.register("plugin") {
         version.set(project.version as String) // use project version as publication version
-        namespace("hangar-user", "hangar-project")
+        id.set("hangar-project")
         channel.set("Release")
         changelog.set("Removed Herobrine") // optional
 
@@ -74,7 +74,7 @@ hangarPublish {
                 platformVersions.set(["1.19.3"])
 
                 // Groovy resolves `dependencies` on Project instead of on PlatformDetails, so we can't use the block DSL like in Kotlin.
-                dependencies.hangar("kennytv", "Test1") {
+                dependencies.hangar("TestProject") {
                     required.set(false)
                 }
             }
