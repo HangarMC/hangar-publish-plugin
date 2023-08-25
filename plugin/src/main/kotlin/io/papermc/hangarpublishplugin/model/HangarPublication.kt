@@ -68,12 +68,6 @@ interface HangarPublication {
     val name: String
 
     /**
-     * The owner (user or organization) of the Hangar project this publication is for.
-     */
-    @get:Input
-    val owner: Property<String>
-
-    /**
      * The slug/id of the Hangar project this publication is for.
      */
     @get:Input
@@ -119,25 +113,43 @@ interface HangarPublication {
     }
 
     /**
-     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
+     * Convenience method for setting [HangarPublication.slug].
      *
-     * @param owner owner
      * @param slug slug
      */
-    fun namespace(owner: String, slug: String) {
-        this.owner.set(owner)
+    fun project(slug: String) {
         this.slug.set(slug)
     }
 
     /**
-     * Convenience method for setting [HangarPublication.owner] and [HangarPublication.slug].
+     * Convenience method for setting [HangarPublication.slug].
+     *
+     * @param slug slug
+     */
+    fun project(slug: Provider<String>) {
+        this.slug.set(slug)
+    }
+
+    /**
+     * Convenience method for setting [HangarPublication.slug].
      *
      * @param owner owner
      * @param slug slug
      */
+    @Deprecated("Project names are now unique, the owner is no longer needed", ReplaceWith("project(slug)"))
+    fun namespace(owner: String, slug: String) {
+        this.project(slug)
+    }
+
+    /**
+     * Convenience method for setting [HangarPublication.slug].
+     *
+     * @param owner owner
+     * @param slug slug
+     */
+    @Deprecated("Project names are now unique, the owner is no longer needed", ReplaceWith("project(slug)"))
     fun namespace(owner: Provider<String>, slug: Provider<String>) {
-        this.owner.set(owner)
-        this.slug.set(slug)
+        this.project(slug)
     }
 
     /**

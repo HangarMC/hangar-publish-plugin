@@ -47,19 +47,17 @@ abstract class PlatformDependencyContainerImpl @Inject constructor(
             op.execute(this)
         }
 
-    override fun hangar(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(owner, slug) {}
+    override fun hangar(slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(slug) {}
 
-    override fun hangar(owner: String, slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(providers.provider { owner }, providers.provider { slug }, op)
+    override fun hangar(slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(providers.provider { slug }, op)
 
-    override fun hangar(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(owner, slug) {}
+    override fun hangar(slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(slug) {}
 
-    override fun hangar(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+    override fun hangar(slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
         register<DependencyDetails.Hangar>(dummyDependencyName()) {
-            this.owner.set(owner)
-            this.owner.disallowChanges()
             this.slug.set(slug)
             this.slug.disallowChanges()
             op.execute(this)

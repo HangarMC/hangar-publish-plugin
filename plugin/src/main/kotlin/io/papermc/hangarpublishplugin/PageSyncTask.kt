@@ -36,9 +36,6 @@ abstract class PageSyncTask : DefaultTask() {
     abstract val auth: Property<HangarAuthService>
 
     @get:Input
-    abstract val owner: Property<String>
-
-    @get:Input
     abstract val slug: Property<String>
 
     @get:Nested
@@ -54,7 +51,7 @@ abstract class PageSyncTask : DefaultTask() {
     fun run() {
         val page = this.page.get()
         val content = page.content.get()
-        val methodEndpoint = "pages/edit/${owner.get()}/${slug.get()}"
+        val methodEndpoint = "pages/edit/${slug.get()}"
         send(this.auth.get(), this.apiEndpoint.get(), methodEndpoint, this.apiKey.get(), ::HttpPatch) { entity ->
             val body = JsonObject()
             body.addProperty("path", page.name.takeIf { it != ProjectPageContainerImpl.RESOURCE_PAGE_ID } ?: "")

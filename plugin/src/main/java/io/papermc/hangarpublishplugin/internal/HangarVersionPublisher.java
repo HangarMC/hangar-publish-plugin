@@ -68,8 +68,8 @@ public final class HangarVersionPublisher {
             }
 
             // Finalize the request
-            final String namespace = publication.getOwner().get() + "/" + publication.getSlug().get();
-            final HttpPost post = new HttpPost(publication.getApiEndpoint().get() + "projects/" + namespace + "/upload");
+            final String projectName = publication.getSlug().get();
+            final HttpPost post = new HttpPost(publication.getApiEndpoint().get() + "projects/" + projectName + "/upload");
             post.setEntity(builder.build());
 
             // Authorize
@@ -85,7 +85,7 @@ public final class HangarVersionPublisher {
             });
 
             if (result != null) {
-                LOGGER.lifecycle("Successfully published {}/{} version {} to Hangar: {}", publication.getOwner().get(), publication.getSlug().get(), publication.getVersion().get(), result);
+                LOGGER.lifecycle("Successfully published {} version {} to Hangar: {}", publication.getSlug().get(), publication.getVersion().get(), result);
             } else {
                 throw new RuntimeException("Error uploading version");
             }

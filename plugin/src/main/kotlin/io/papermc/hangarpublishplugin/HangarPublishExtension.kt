@@ -35,7 +35,7 @@ interface HangarPublishExtension {
      * hangarPublish {
      *     publications.register("myPublication") {
      *         version.set(project.version as String)
-     *         namespace("AwesomeDeveloper", "AwesomePlugin")
+     *         project("AwesomePlugin")
      *         channel.set("Release")
      *         changelog.set("Removed Herobrine")
      *         platforms {
@@ -43,7 +43,7 @@ interface HangarPublishExtension {
      *                 jar.set(tasks.jar.flatMap { it.archiveFile })
      *                 platformVersions.set(listOf("1.18", "1.19"))
      *                 dependencies {
-     *                     hangar("Someone", "Something") {
+     *                     hangar("Something") {
      *                         required.set(false)
      *                     }
      *                     url("Some Dependency", "https://dependency-plugin-website.com/")
