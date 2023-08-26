@@ -35,7 +35,7 @@ interface HangarPublishExtension {
      * hangarPublish {
      *     publications.register("myPublication") {
      *         version.set(project.version as String)
-     *         project("AwesomePlugin")
+     *         id.set("AwesomePlugin")
      *         channel.set("Release")
      *         changelog.set("Removed Herobrine")
      *         platforms {

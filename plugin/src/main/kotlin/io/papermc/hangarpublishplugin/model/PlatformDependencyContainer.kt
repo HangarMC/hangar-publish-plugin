@@ -70,54 +70,34 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
      *
-     * @param slug dependency slug
+     * @param id dependency project id
      * @return registration provider
      */
-    fun hangar(slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: String): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
      *
-     * @param slug dependency slug
+     * @param id dependency project id
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
      *
-     * @param slug dependency slug
+     * @param id dependency project id
      * @return registration provider
      */
-    fun hangar(slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(id: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar], configuring it with the provided action.
      *
-     * @param slug dependency slug
+     * @param id dependency project id
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
-
-    @Deprecated(message = "Project names are now unique, the owner is no longer needed", ReplaceWith("hangar(slug)"))
-    fun hangar(owner: String, slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar> {
-        return this.hangar(slug)
-    }
-
-    @Deprecated(message = "Project names are now unique, the owner is no longer needed", ReplaceWith("hangar(slug, op)"))
-    fun hangar(owner: String, slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> {
-        return this.hangar(slug, op)
-    }
-
-    @Deprecated(message = "Project names are now unique, the owner is no longer needed", ReplaceWith("hangar(slug)"))
-    fun hangar(owner: Provider<String>, slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> {
-        return this.hangar(slug)
-    }
-
-    @Deprecated(message = "Project names are now unique, the owner is no longer needed", ReplaceWith("hangar(slug, op)"))
-    fun hangar(owner: Provider<String>, slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> {
-        return this.hangar(slug, op)
-    }
+    fun hangar(id: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
 }

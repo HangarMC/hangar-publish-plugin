@@ -94,10 +94,10 @@ final class HangarVersion {
         private final @Nullable String externalUrl;
 
         private static PluginDependency create(
-            final String hangarProjectName,
+            final String projectId,
             final boolean required
         ) {
-            return new PluginDependency(hangarProjectName, required, null);
+            return new PluginDependency(projectId, required, null);
         }
 
         private static PluginDependency create(
@@ -142,7 +142,7 @@ final class HangarVersion {
 
         private static PluginDependency fromHangarDependencyDetails(final DependencyDetails.Hangar details) {
             return PluginDependency.create(
-                details.getSlug().get(),
+                details.getId().get(),
                 details.getRequired().get()
             );
         }

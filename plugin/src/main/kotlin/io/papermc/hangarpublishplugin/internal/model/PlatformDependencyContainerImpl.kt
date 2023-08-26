@@ -47,19 +47,19 @@ abstract class PlatformDependencyContainerImpl @Inject constructor(
             op.execute(this)
         }
 
-    override fun hangar(slug: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(slug) {}
+    override fun hangar(id: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(id) {}
 
-    override fun hangar(slug: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(providers.provider { slug }, op)
+    override fun hangar(id: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(providers.provider { id }, op)
 
-    override fun hangar(slug: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(slug) {}
+    override fun hangar(id: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+        hangar(id) {}
 
-    override fun hangar(slug: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+    override fun hangar(id: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
         register<DependencyDetails.Hangar>(dummyDependencyName()) {
-            this.slug.set(slug)
-            this.slug.disallowChanges()
+            this.id.set(id)
+            this.id.disallowChanges()
             op.execute(this)
         }
 

@@ -21,7 +21,6 @@ import io.papermc.hangarpublishplugin.PageSyncTask
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -68,10 +67,10 @@ interface HangarPublication {
     val name: String
 
     /**
-     * The slug/id of the Hangar project this publication is for.
+     * The id of the Hangar project this publication is for.
      */
     @get:Input
-    val slug: Property<String>
+    val id: Property<String>
 
     /**
      * The version for this publication.
@@ -110,46 +109,6 @@ interface HangarPublication {
      */
     fun platforms(op: Action<NamedDomainObjectContainer<PlatformDetails>>) {
         op.execute(platforms)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.slug].
-     *
-     * @param slug slug
-     */
-    fun project(slug: String) {
-        this.slug.set(slug)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.slug].
-     *
-     * @param slug slug
-     */
-    fun project(slug: Provider<String>) {
-        this.slug.set(slug)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.slug].
-     *
-     * @param owner owner
-     * @param slug slug
-     */
-    @Deprecated("Project names are now unique, the owner is no longer needed", ReplaceWith("project(slug)"))
-    fun namespace(owner: String, slug: String) {
-        this.project(slug)
-    }
-
-    /**
-     * Convenience method for setting [HangarPublication.slug].
-     *
-     * @param owner owner
-     * @param slug slug
-     */
-    @Deprecated("Project names are now unique, the owner is no longer needed", ReplaceWith("project(slug)"))
-    fun namespace(owner: Provider<String>, slug: Provider<String>) {
-        this.project(slug)
     }
 
     /**

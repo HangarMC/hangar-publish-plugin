@@ -109,7 +109,7 @@ class HangarPublishPlugin : Plugin<Project> {
                 description = "Syncs the '${thisPage.name}' page of the '${publication.name}' publication to Hangar."
                 auth.set(authService)
                 usesService(authService)
-                slug.set(publication.slug)
+                id.set(publication.id)
                 page.set(thisPage)
                 apiKey.set(publication.apiKey)
                 apiEndpoint.set(publication.apiEndpoint)
