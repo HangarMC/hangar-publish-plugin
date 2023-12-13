@@ -17,6 +17,7 @@
 package io.papermc.hangarpublishplugin
 
 import io.papermc.hangarpublishplugin.internal.HangarPublishExtensionImpl
+import io.papermc.hangarpublishplugin.internal.util.capitalized
 import io.papermc.hangarpublishplugin.model.HangarPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -34,7 +35,7 @@ class HangarPublishPlugin : Plugin<Project> {
         private fun HangarPublication.publishTaskName(): String =
             "publish${name.sanitizeNameForTaskName()}PublicationToHangar"
 
-        private fun String.sanitizeNameForTaskName() = capitalize().replace(' ', '_')
+        private fun String.sanitizeNameForTaskName() = capitalized().replace(' ', '_')
 
         private fun syncTaskName(publicationName: String, pageName: String): String =
             "sync${publicationName.sanitizeNameForTaskName()}Publication${pageName.sanitizeNameForTaskName()}PageToHangar"
