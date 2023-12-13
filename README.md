@@ -12,31 +12,29 @@ hangar-publish-plugin is published to the Gradle plugin portal under the `io.pap
 <summary>Kotlin DSL example</summary>
 
 ```kotlin
-import io.papermc.hangarpublishplugin.model.Platforms
-
 plugins {
     id("io.papermc.hangar-publish-plugin") version "VERSION"
 }
 
 hangarPublish {
     publications.register("plugin") {
-        version.set(project.version as String) // use project version as publication version
-        id.set("hangar-project")
-        channel.set("Release")
-        changelog.set("Removed Herobrine") // optional
+        version = project.version as String // use project version as publication version
+        id = "hangar-project"
+        channel = "Release"
+        changelog = "Removed Herobrine" // optional
 
         // your api key.
         // defaults to the `io.papermc.hangar-publish-plugin.[publicationName].api-key` or `io.papermc.hangar-publish-plugin.default-api-key` Gradle properties
-        apiKey.set("api key")
+        apiKey = "api key"
         
         // register platforms
         platforms {
-            register(Platforms.PAPER) {
-                jar.set(tasks.jar.flatMap { it.archiveFile })
-                platformVersions.set(listOf("1.19.3"))
+            paper {
+                jar = tasks.jar.flatMap { it.archiveFile }
+                platformVersions = listOf("1.19.3")
                 dependencies {
                     hangar("TestProject") {
-                        required.set(false)
+                        required = false
                     }
                 }
             }
@@ -50,32 +48,30 @@ hangarPublish {
 <summary>Groovy DSL example</summary>
 
 ```groovy
-import io.papermc.hangarpublishplugin.model.Platforms
-
 plugins {
-    id "io.papermc.hangar-publish-plugin" version "VERSION"
+    id 'io.papermc.hangar-publish-plugin' version 'VERSION'
 }
 
 hangarPublish {
-    publications.register("plugin") {
-        version.set(project.version as String) // use project version as publication version
-        id.set("hangar-project")
-        channel.set("Release")
-        changelog.set("Removed Herobrine") // optional
+    publications.register('plugin') {
+        version = project.version as String // use project version as publication version
+        id = 'hangar-project'
+        channel = 'Release'
+        changelog = 'Removed Herobrine' // optional
 
         // your api key.
         // defaults to the `io.papermc.hangar-publish-plugin.[publicationName].api-key` or `io.papermc.hangar-publish-plugin.default-api-key` Gradle properties
-        apiKey.set("api key")
+        apiKey = 'api key'
         
         // register platforms
         platforms {
-            register(Platforms.PAPER) {
-                jar.set(tasks.jar.archiveFile)
-                platformVersions.set(["1.19.3"])
-
-                // Groovy resolves `dependencies` on Project instead of on PlatformDetails, so we can't use the block DSL like in Kotlin.
-                dependencies.hangar("TestProject") {
-                    required.set(false)
+            paper {
+                jar = tasks.jar.archiveFile
+                platformVersions = ['1.19.3']
+                dependencies {
+                    hangar('TestProject') {
+                        required = false
+                    }
                 }
             }
         }

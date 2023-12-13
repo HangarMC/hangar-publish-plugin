@@ -14,27 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.papermc.hangarpublishplugin.internal.util
+package io.papermc.hangarpublishplugin.model
 
-import groovy.lang.Closure
+import io.papermc.hangarpublishplugin.util.DelegatingNamedDomainObjectContainer
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 
-fun String.capitalized(): String {
-    return replaceFirstChar(Char::uppercase)
-}
-
-fun <T> NamedDomainObjectContainer<T>.maybeRegister(name: String, action: Action<T>): NamedDomainObjectProvider<T> {
-    return if (name in names) {
-        named(name, action)
-    } else {
-        register(name, action)
-    }
-}
-
-fun <T> Closure<T>.runWithDelegate(t: T) {
-    delegate = t
-    run()
-    delegate = null
+/**
+ * Extension of [NamedDomainObjectProvider] for [PlatformContainer], adding convenience methods
+ * for registering [Platforms].
+ */
+interface PlatformContainer : DelegatingNamedDomainObjectContainer<PlatformDetails> {
+    fun paper(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
+    fun velocity(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
+    fun waterfall(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
 }

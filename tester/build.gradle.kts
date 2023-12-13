@@ -1,5 +1,3 @@
-import io.papermc.hangarpublishplugin.model.Platforms
-
 plugins {
     java
     id("io.papermc.hangar-publish-plugin")
@@ -20,35 +18,35 @@ fun copyJar(name: String): Provider<RegularFile> {
     return layout.file(copyTask.map { it.outputs.files.single() })
 }
 
-val paper = copyJar("paper")
-val waterfall = copyJar("waterfall")
-val velocity = copyJar("velocity")
+val paperJar = copyJar("paper")
+val waterfallJar = copyJar("waterfall")
+val velocityJar = copyJar("velocity")
 
 hangarPublish {
     publications.register("publishPluginTest") {
-        apiEndpoint.set("https://hangar.papermc.dev/api/v1/") // staging
-        version.set(System.currentTimeMillis().toString())
-        id.set("test-project")
-        channel.set("Release")
-        changelog.set("Removed Herobrine")
+        apiEndpoint = "https://hangar.papermc.dev/api/v1/" // staging
+        version = System.currentTimeMillis().toString()
+        id = "test-project"
+        channel = "Release"
+        changelog = "Removed Herobrine"
         platforms {
-            register(Platforms.PAPER) {
-                jar.set(paper)
-                platformVersions.set(listOf("1.17-1.19"))
+            paper {
+                jar = paperJar
+                platformVersions = listOf("1.17-1.19")
                 dependencies {
                     hangar("WonderfulProject") {
-                        required.set(false)
+                        required = false
                     }
                 }
             }
-            register(Platforms.WATERFALL) {
-                jar.set(waterfall)
-                platformVersions.set(listOf("1.19"))
+            waterfall {
+                jar = waterfallJar
+                platformVersions = listOf("1.19")
                 dependencies.url("Google", "https://google.com")
             }
-            register(Platforms.VELOCITY) {
-                jar.set(velocity)
-                platformVersions.set(listOf("3.1"))
+            velocity {
+                jar = velocityJar
+                platformVersions = listOf("3.1")
             }
         }
 
