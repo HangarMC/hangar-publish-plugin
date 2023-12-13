@@ -16,7 +16,9 @@
  */
 package io.papermc.hangarpublishplugin.model
 
+import groovy.lang.Closure
 import io.papermc.hangarpublishplugin.HangarPublishExtension
+import io.papermc.hangarpublishplugin.internal.util.runWithDelegate
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -78,5 +80,14 @@ interface PlatformDetails {
      */
     fun dependencies(op: Action<PlatformDependencyContainer>) {
         op.execute(dependencies)
+    }
+
+    /**
+     * Configures [dependencies] with [op].
+     *
+     * @param op configuration action
+     */
+    fun dependencies(op: Closure<PlatformDependencyContainer>) {
+        op.runWithDelegate(dependencies)
     }
 }

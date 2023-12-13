@@ -34,17 +34,17 @@ interface HangarPublishExtension {
      * ```
      * hangarPublish {
      *     publications.register("myPublication") {
-     *         version.set(project.version as String)
-     *         id.set("AwesomePlugin")
-     *         channel.set("Release")
-     *         changelog.set("Removed Herobrine")
+     *         version = project.version as String
+     *         id = "AwesomePlugin"
+     *         channel = "Release"
+     *         changelog = "Removed Herobrine"
      *         platforms {
-     *             register(Platforms.PAPER) {
-     *                 jar.set(tasks.jar.flatMap { it.archiveFile })
-     *                 platformVersions.set(listOf("1.18", "1.19"))
+     *             paper {
+     *                 jar = tasks.jar.flatMap { it.archiveFile }
+     *                 platformVersions = listOf("1.18", "1.19")
      *                 dependencies {
      *                     hangar("Something") {
-     *                         required.set(false)
+     *                         required = false
      *                     }
      *                     url("Some Dependency", "https://dependency-plugin-website.com/")
      *                 }

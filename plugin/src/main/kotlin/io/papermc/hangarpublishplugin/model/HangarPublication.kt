@@ -19,11 +19,9 @@ package io.papermc.hangarpublishplugin.model
 import io.papermc.hangarpublishplugin.HangarPublishExtension
 import io.papermc.hangarpublishplugin.PageSyncTask
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
 /**
@@ -99,15 +97,15 @@ interface HangarPublication {
      * [Platforms] holds constants for all available platforms
      * on Paper's Hangar instance.
      */
-    @get:Nested
-    val platforms: NamedDomainObjectContainer<PlatformDetails>
+    @get:Internal
+    val platforms: PlatformContainer
 
     /**
      * Configures [platforms] with [op].
      *
      * @param op configuration action
      */
-    fun platforms(op: Action<NamedDomainObjectContainer<PlatformDetails>>) {
+    fun platforms(op: Action<PlatformContainer>) {
         op.execute(platforms)
     }
 
@@ -133,9 +131,9 @@ interface HangarPublication {
      *
      *             // Custom page:
      *             register("Custom-Page") {
-     *                 content.set("# Some custom page header")
+     *                 content = "# Some custom page header"
      *                 // or
-     *                 content.set(provider { file("MY_PAGE.md").readText() })
+     *                 content = provider { file("MY_PAGE.md").readText() }
      *             }
      *         }
      *     }

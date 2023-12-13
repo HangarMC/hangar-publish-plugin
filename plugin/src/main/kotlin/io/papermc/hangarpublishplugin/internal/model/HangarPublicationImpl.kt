@@ -17,6 +17,7 @@
 package io.papermc.hangarpublishplugin.internal.model
 
 import io.papermc.hangarpublishplugin.model.HangarPublication
+import io.papermc.hangarpublishplugin.model.PlatformContainer
 import io.papermc.hangarpublishplugin.model.PlatformDetails
 import io.papermc.hangarpublishplugin.model.ProjectPage
 import io.papermc.hangarpublishplugin.model.ProjectPageContainer
@@ -24,18 +25,23 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Nested
 import org.gradle.kotlin.dsl.domainObjectContainer
+import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
 abstract class HangarPublicationImpl @Inject constructor(
     override val name: String,
     objects: ObjectFactory
 ) : HangarPublication {
+    @get:Nested
     @Suppress("unchecked_cast") // GH:gradle/gradle#23655
-    override val platforms: NamedDomainObjectContainer<PlatformDetails> =
+    val platformsContainer: NamedDomainObjectContainer<PlatformDetails> =
         objects.domainObjectContainer(PlatformDetailsImpl::class.java) as NamedDomainObjectContainer<PlatformDetails>
 
-    @get:Nested
-    val pageContainer: NamedDomainObjectContainer<ProjectPage> = objects.domainObjectContainer(ProjectPage::class)
+    override val platforms: PlatformContainer = objects.newInstance(PlatformContainerImpl::class, platformsContainer)
 
-    override val pages: ProjectPageContainer = objects.newInstance(ProjectPageContainerImpl::class.java, pageContainer)
+    @get:Nested
+    val pageContainer: NamedDomainObjectContainer<ProjectPage> =
+        objects.domainObjectContainer(ProjectPage::class)
+
+    override val pages: ProjectPageContainer = objects.newInstance(ProjectPageContainerImpl::class, pageContainer)
 }
