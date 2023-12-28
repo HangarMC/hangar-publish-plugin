@@ -76,9 +76,10 @@ public final class HangarVersionPublisher {
             final HangarAuthorizationToken jwt = this.auth.jwt(client, publication.getApiEndpoint().get(), publication.getApiKey().get());
             post.addHeader("Authorization", jwt.getJwt());
 
+            final String[] error = new String[1];
             final @Nullable String result = client.execute(post, response -> {
                 if (response.getCode() != 200) {
-                    LOGGER.error("Error uploading version, returned {}: {}", response.getCode(), ErrorResponseParser.parse(response));
+                    error[0] = "Error uploading version, returned " + response.getCode() + ": " + ErrorResponseParser.parse(response);
                     return null;
                 }
                 return GSON.fromJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8), JsonObject.class).get("url").getAsString();
@@ -87,7 +88,7 @@ public final class HangarVersionPublisher {
             if (result != null) {
                 LOGGER.lifecycle("Successfully published {} version {} to Hangar: {}", publication.getId().get(), publication.getVersion().get(), result);
             } else {
-                throw new RuntimeException("Error uploading version");
+                throw new RuntimeException(error[0] != null ? error[0] : "Unknown error uploading version");
             }
         }
     }
