@@ -39,6 +39,10 @@ public final class ErrorResponseParser {
             return response.getReasonPhrase();
         }
 
+        if (object == null) {
+            return response.getReasonPhrase();
+        }
+
         final JsonElement fieldErrors = object.get("fieldErrors");
         if (fieldErrors != null && !fieldErrors.getAsJsonArray().isEmpty()) {
             final JsonArray fieldErrorsArray = fieldErrors.getAsJsonArray();
