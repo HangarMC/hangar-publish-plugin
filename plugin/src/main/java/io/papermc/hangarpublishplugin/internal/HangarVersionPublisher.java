@@ -78,7 +78,7 @@ public final class HangarVersionPublisher {
 
             final String[] error = new String[1];
             final @Nullable String result = client.execute(post, response -> {
-                if (response.getCode() != 200) {
+                if (response.getCode() != 201) {
                     error[0] = "Error uploading version, returned " + response.getCode() + ": " + ErrorResponseParser.parse(response);
                     return null;
                 }
