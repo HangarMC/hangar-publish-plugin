@@ -210,8 +210,9 @@ final class HangarVersion {
             }
 
             final List<FileData> fileData = filePlatforms.values().stream().map(FileData::new).collect(Collectors.toList());
-            for (final List<String> platforms : urlPlatforms.values()) {
-                fileData.add(new FileData(platforms));
+            for (final String url : urlPlatforms.keySet()) {
+                final List<String> platforms = urlPlatforms.get(url);
+                fileData.add(new FileData(platforms, url));
             }
             return fileData;
         }
