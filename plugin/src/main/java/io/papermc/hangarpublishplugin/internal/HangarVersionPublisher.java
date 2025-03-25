@@ -53,7 +53,7 @@ public final class HangarVersionPublisher {
         final HangarVersion version = HangarVersion.fromPublication(publication);
         final List<File> files = version.files().stream()
             .filter(HangarVersion.FileData::isFile)
-            .map(fileData -> publication.getPlatforms().getByName(fileData.firstPlatform()).getJar().getAsFile().getOrNull())
+            .map(fileData -> publication.getPlatforms().getByName(fileData.firstPlatform()).getJar().getAsFile().get())
             .collect(Collectors.toList());
         try (final CloseableHttpClient client = HttpClients.createDefault()) {
             final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -64,9 +64,7 @@ public final class HangarVersionPublisher {
 
             // Attach files (one file for each platform where no external url is defined in the version upload data)
             for (final File file : files) {
-                if(file != null) {
-                    builder.addPart("files", new FileBody(file, ContentType.DEFAULT_BINARY));
-                }
+                builder.addPart("files", new FileBody(file, ContentType.DEFAULT_BINARY));
             }
 
             // Finalize the request
