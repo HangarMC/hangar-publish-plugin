@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.papermc"
-version = "0.1.3"
+version = "0.1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
