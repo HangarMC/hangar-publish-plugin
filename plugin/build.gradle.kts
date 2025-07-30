@@ -4,7 +4,7 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "1.3.1"
-    id("net.kyori.indra.license-header") version "3.1.3"
+    id("net.kyori.indra.license-header") version "3.2.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
 
