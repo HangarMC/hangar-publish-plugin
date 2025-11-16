@@ -68,7 +68,7 @@ testing {
     }
 }
 
-publishing.repositories.maven("https://repo.papermc.io/repository/maven-snapshots/") {
+publishing.repositories.maven("https://artifactory.papermc.io/artifactory/snapshots/") {
     name = "paper"
     credentials(PasswordCredentials::class)
     mavenContent { snapshotsOnly() }
