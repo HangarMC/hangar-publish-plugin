@@ -92,17 +92,17 @@ tasks.named<Task>("check") {
 
 kotlin {
     jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 tasks.withType<JavaCompile> {
-    // options.release = 8
+    options.release = 17
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_1_8
-        // freeCompilerArgs += "-Xjdk-release=1.8"
+        jvmTarget = JvmTarget.JVM_17
+        freeCompilerArgs.add("-Xjdk-release=17")
     }
 }
