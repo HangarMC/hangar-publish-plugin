@@ -17,15 +17,20 @@
 package io.papermc.hangarpublishplugin
 
 import io.papermc.hangarpublishplugin.internal.HangarPublishExtensionImpl
+import io.papermc.hangarpublishplugin.internal.model.HangarPublicationImplTaskView
 import io.papermc.hangarpublishplugin.internal.util.capitalized
 import io.papermc.hangarpublishplugin.model.HangarPublication
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.register
+import javax.inject.Inject
 
-class HangarPublishPlugin : Plugin<Project> {
+abstract class HangarPublishPlugin : Plugin<Project> {
     private companion object {
         const val PAPER_HANGAR_API: String = "https://hangar.papermc.io/api/v1/"
         const val TASK_GROUP: String = "Hangar Publish Plugin"
@@ -41,6 +46,12 @@ class HangarPublishPlugin : Plugin<Project> {
             pageName: String,
         ): String = "sync${publicationName.sanitizeNameForTaskName()}Publication${pageName.sanitizeNameForTaskName()}PageToHangar"
     }
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val objects: ObjectFactory
 
     override fun apply(project: Project) {
         val authService = project.gradle.sharedServices.registerIfAbsent(AUTH_SERVICE_NAME, HangarAuthService::class.java) {}
@@ -79,19 +90,20 @@ class HangarPublishPlugin : Plugin<Project> {
         globalSyncAll: TaskProvider<*>,
     ) {
         publication.apiKey.convention(
-            target.providers
+            providers
                 .gradleProperty("io.papermc.hangar-publish-plugin.${publication.name}.api-key")
-                .orElse(target.providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key")),
+                .orElse(providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key")),
         )
         publication.apiEndpoint.convention(PAPER_HANGAR_API)
 
+        val publicationView = objects.newInstance<HangarPublicationImplTaskView>(publication, objects)
         val publishTask =
-            target.tasks.register<HangarPublishTask>(publication.publishTaskName()) {
+            target.tasks.register<HangarPublishTask>(publicationView.publishTaskName()) {
                 group = TASK_GROUP
-                description = "Publishes the '${publication.name}' publication to Hangar."
+                description = "Publishes the '${publicationView.name}' publication to Hangar."
                 auth.set(authService)
                 usesService(authService)
-                this.publication.set(publication)
+                this.publication.set(publicationView)
             }
 
         publishAll.configure {

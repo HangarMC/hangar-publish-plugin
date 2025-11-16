@@ -4,11 +4,9 @@ plugins {
 }
 
 fun copyJar(name: String): Provider<RegularFile> {
+    val from = tasks.jar.flatMap { it.archiveFile }
+    val to = layout.buildDirectory.file("$name.jar")
     val copyTask = tasks.register("copy$name") {
-        val from = tasks.jar.flatMap { it.archiveFile }
-        val to = layout.file(from.map {
-            it.asFile.parentFile.resolve("$name.jar")
-        })
         inputs.file(from)
         outputs.file(to)
         doLast {
