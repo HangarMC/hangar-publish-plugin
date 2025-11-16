@@ -21,17 +21,17 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 
-fun String.capitalized(): String {
-    return replaceFirstChar(Char::uppercase)
-}
+fun String.capitalized(): String = replaceFirstChar(Char::uppercase)
 
-fun <T> NamedDomainObjectContainer<T>.maybeRegister(name: String, action: Action<T>): NamedDomainObjectProvider<T> {
-    return if (name in names) {
+fun <T : Any> NamedDomainObjectContainer<T>.maybeRegister(
+    name: String,
+    action: Action<T>,
+): NamedDomainObjectProvider<T> =
+    if (name in names) {
         named(name, action)
     } else {
         register(name, action)
     }
-}
 
 fun <T> Closure<T>.runWithDelegate(t: T) {
     delegate = t

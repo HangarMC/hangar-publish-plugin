@@ -27,7 +27,11 @@ abstract class AbstractDependencyDetails : DependencyDetails {
         required.convention(true)
     }
 
-    abstract class HangarDependencyDetails : AbstractDependencyDetails(), DependencyDetails.Hangar
+    abstract class HangarDependencyDetails :
+        AbstractDependencyDetails(),
+        DependencyDetails.Hangar
 
-    abstract class UrlDependencyDetails : AbstractDependencyDetails(), DependencyDetails.Url
+    abstract class UrlDependencyDetails :
+        AbstractDependencyDetails(),
+        DependencyDetails.Url
 }

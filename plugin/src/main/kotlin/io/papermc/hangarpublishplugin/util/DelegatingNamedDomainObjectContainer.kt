@@ -21,7 +21,7 @@ import org.gradle.api.NamedDomainObjectContainer
 /**
  * Delegating [NamedDomainObjectContainer].
  */
-interface DelegatingNamedDomainObjectContainer<T> : NamedDomainObjectContainer<T> {
+interface DelegatingNamedDomainObjectContainer<T : Any> : NamedDomainObjectContainer<T> {
     /**
      * The backing [NamedDomainObjectContainer] wrapped by this [DelegatingNamedDomainObjectContainer].
      *

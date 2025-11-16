@@ -32,35 +32,39 @@ class HangarPublishPlugin : Plugin<Project> {
         const val EXTENSION_NAME: String = "hangarPublish"
         const val AUTH_SERVICE_NAME: String = "hangar-auth"
 
-        private fun HangarPublication.publishTaskName(): String =
-            "publish${name.sanitizeNameForTaskName()}PublicationToHangar"
+        private fun HangarPublication.publishTaskName(): String = "publish${name.sanitizeNameForTaskName()}PublicationToHangar"
 
         private fun String.sanitizeNameForTaskName() = capitalized().replace(' ', '_')
 
-        private fun syncTaskName(publicationName: String, pageName: String): String =
-            "sync${publicationName.sanitizeNameForTaskName()}Publication${pageName.sanitizeNameForTaskName()}PageToHangar"
+        private fun syncTaskName(
+            publicationName: String,
+            pageName: String,
+        ): String = "sync${publicationName.sanitizeNameForTaskName()}Publication${pageName.sanitizeNameForTaskName()}PageToHangar"
     }
 
     override fun apply(project: Project) {
         val authService = project.gradle.sharedServices.registerIfAbsent(AUTH_SERVICE_NAME, HangarAuthService::class.java) {}
 
-        val ext = project.extensions.create(
-            HangarPublishExtension::class.java,
-            EXTENSION_NAME,
-            HangarPublishExtensionImpl::class.java
-        )
+        val ext =
+            project.extensions.create(
+                HangarPublishExtension::class.java,
+                EXTENSION_NAME,
+                HangarPublishExtensionImpl::class.java,
+            )
 
-        val publishAll = project.tasks.register("publishAllPublicationsToHangar") {
-            group = TASK_GROUP
-            description = "Publishes all registered Hangar publications for this project."
-            doNotTrackState("$name should always run when requested")
-        }
+        val publishAll =
+            project.tasks.register("publishAllPublicationsToHangar") {
+                group = TASK_GROUP
+                description = "Publishes all registered Hangar publications for this project."
+                doNotTrackState("$name should always run when requested")
+            }
 
-        val globalSyncAll = project.tasks.register("syncAllPagesToHangar") {
-            group = TASK_GROUP
-            description = "Syncs all registered pages of all registered Hangar publications for this project."
-            doNotTrackState("$name should always run when requested")
-        }
+        val globalSyncAll =
+            project.tasks.register("syncAllPagesToHangar") {
+                group = TASK_GROUP
+                description = "Syncs all registered pages of all registered Hangar publications for this project."
+                doNotTrackState("$name should always run when requested")
+            }
 
         ext.publications.all {
             handlePublication(project, authService, this, publishAll, globalSyncAll)
@@ -72,31 +76,34 @@ class HangarPublishPlugin : Plugin<Project> {
         authService: Provider<HangarAuthService>,
         publication: HangarPublication,
         publishAll: TaskProvider<*>,
-        globalSyncAll: TaskProvider<*>
+        globalSyncAll: TaskProvider<*>,
     ) {
         publication.apiKey.convention(
-            target.providers.gradleProperty("io.papermc.hangar-publish-plugin.${publication.name}.api-key")
-                .orElse(target.providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key"))
+            target.providers
+                .gradleProperty("io.papermc.hangar-publish-plugin.${publication.name}.api-key")
+                .orElse(target.providers.gradleProperty("io.papermc.hangar-publish-plugin.default-api-key")),
         )
         publication.apiEndpoint.convention(PAPER_HANGAR_API)
 
-        val publishTask = target.tasks.register<HangarPublishTask>(publication.publishTaskName()) {
-            group = TASK_GROUP
-            description = "Publishes the '${publication.name}' publication to Hangar."
-            auth.set(authService)
-            usesService(authService)
-            this.publication.set(publication)
-        }
+        val publishTask =
+            target.tasks.register<HangarPublishTask>(publication.publishTaskName()) {
+                group = TASK_GROUP
+                description = "Publishes the '${publication.name}' publication to Hangar."
+                auth.set(authService)
+                usesService(authService)
+                this.publication.set(publication)
+            }
 
         publishAll.configure {
             dependsOn(publishTask)
         }
 
-        val syncAllTask = target.tasks.register("syncAll${publication.name.sanitizeNameForTaskName()}PublicationPagesToHangar") {
-            group = TASK_GROUP
-            description = "Syncs all pages for the '${publication.name}' publication to Hangar."
-            doNotTrackState("$name should always run when requested")
-        }
+        val syncAllTask =
+            target.tasks.register("syncAll${publication.name.sanitizeNameForTaskName()}PublicationPagesToHangar") {
+                group = TASK_GROUP
+                description = "Syncs all pages for the '${publication.name}' publication to Hangar."
+                doNotTrackState("$name should always run when requested")
+            }
 
         globalSyncAll.configure {
             dependsOn(syncAllTask)
@@ -105,16 +112,17 @@ class HangarPublishPlugin : Plugin<Project> {
         publication.pages.all {
             val thisPage = this@all
 
-            val syncTask = target.tasks.register<PageSyncTask>(syncTaskName(publication.name, name)) {
-                group = TASK_GROUP
-                description = "Syncs the '${thisPage.name}' page of the '${publication.name}' publication to Hangar."
-                auth.set(authService)
-                usesService(authService)
-                id.set(publication.id)
-                page.set(thisPage)
-                apiKey.set(publication.apiKey)
-                apiEndpoint.set(publication.apiEndpoint)
-            }
+            val syncTask =
+                target.tasks.register<PageSyncTask>(syncTaskName(publication.name, name)) {
+                    group = TASK_GROUP
+                    description = "Syncs the '${thisPage.name}' page of the '${publication.name}' publication to Hangar."
+                    auth.set(authService)
+                    usesService(authService)
+                    id.set(publication.id)
+                    page.set(thisPage)
+                    apiKey.set(publication.apiKey)
+                    apiEndpoint.set(publication.apiEndpoint)
+                }
             syncAllTask.configure {
                 dependsOn(syncTask)
             }

@@ -33,7 +33,7 @@ fun <T : ClassicHttpRequest> send(
     methodEndpoint: String,
     apiKey: String,
     entityFactory: (String) -> T,
-    entityDecorator: (T) -> Unit
+    entityDecorator: (T) -> Unit,
 ) {
     HttpClients.createDefault().use { client ->
         val endpoint = apiEndpoint + methodEndpoint

@@ -26,15 +26,18 @@ import org.gradle.kotlin.dsl.polymorphicDomainObjectContainer
 import org.gradle.kotlin.dsl.registerBinding
 import javax.inject.Inject
 
-abstract class PlatformDetailsImpl @Inject constructor(
-    override val name: String,
-    objects: ObjectFactory
-) : PlatformDetails {
-    @get:Nested
-    val dependencyContainer: PolymorphicDomainObjectContainer<DependencyDetails> = objects.polymorphicDomainObjectContainer(DependencyDetails::class).also {
-        it.registerBinding(DependencyDetails.Hangar::class, AbstractDependencyDetails.HangarDependencyDetails::class)
-        it.registerBinding(DependencyDetails.Url::class, AbstractDependencyDetails.UrlDependencyDetails::class)
-    }
+abstract class PlatformDetailsImpl
+    @Inject
+    constructor(
+        override val name: String,
+        objects: ObjectFactory,
+    ) : PlatformDetails {
+        @get:Nested
+        val dependencyContainer: PolymorphicDomainObjectContainer<DependencyDetails> =
+            objects.polymorphicDomainObjectContainer(DependencyDetails::class).also {
+                it.registerBinding(DependencyDetails.Hangar::class, AbstractDependencyDetails.HangarDependencyDetails::class)
+                it.registerBinding(DependencyDetails.Url::class, AbstractDependencyDetails.UrlDependencyDetails::class)
+            }
 
-    override val dependencies: PlatformDependencyContainer = objects.newInstance(PlatformDependencyContainerImpl::class.java, dependencyContainer)
-}
+        override val dependencies: PlatformDependencyContainer = objects.newInstance(PlatformDependencyContainerImpl::class.java, dependencyContainer)
+    }

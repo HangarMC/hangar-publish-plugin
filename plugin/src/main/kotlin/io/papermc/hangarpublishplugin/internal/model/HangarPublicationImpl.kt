@@ -28,20 +28,22 @@ import org.gradle.kotlin.dsl.domainObjectContainer
 import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
-abstract class HangarPublicationImpl @Inject constructor(
-    override val name: String,
-    objects: ObjectFactory
-) : HangarPublication {
-    @get:Nested
-    @Suppress("unchecked_cast") // GH:gradle/gradle#23655
-    val platformsContainer: NamedDomainObjectContainer<PlatformDetails> =
-        objects.domainObjectContainer(PlatformDetailsImpl::class.java) as NamedDomainObjectContainer<PlatformDetails>
+abstract class HangarPublicationImpl
+    @Inject
+    constructor(
+        override val name: String,
+        objects: ObjectFactory,
+    ) : HangarPublication {
+        @get:Nested
+        @Suppress("unchecked_cast") // GH:gradle/gradle#23655
+        val platformsContainer: NamedDomainObjectContainer<PlatformDetails> =
+            objects.domainObjectContainer(PlatformDetailsImpl::class.java) as NamedDomainObjectContainer<PlatformDetails>
 
-    override val platforms: PlatformContainer = objects.newInstance(PlatformContainerImpl::class, platformsContainer)
+        override val platforms: PlatformContainer = objects.newInstance(PlatformContainerImpl::class, platformsContainer)
 
-    @get:Nested
-    val pageContainer: NamedDomainObjectContainer<ProjectPage> =
-        objects.domainObjectContainer(ProjectPage::class)
+        @get:Nested
+        val pageContainer: NamedDomainObjectContainer<ProjectPage> =
+            objects.domainObjectContainer(ProjectPage::class)
 
-    override val pages: ProjectPageContainer = objects.newInstance(ProjectPageContainerImpl::class, pageContainer)
-}
+        override val pages: ProjectPageContainer = objects.newInstance(ProjectPageContainerImpl::class, pageContainer)
+    }

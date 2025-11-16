@@ -26,6 +26,8 @@ import org.gradle.api.NamedDomainObjectProvider
  */
 interface PlatformContainer : DelegatingNamedDomainObjectContainer<PlatformDetails> {
     fun paper(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
+
     fun velocity(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
+
     fun waterfall(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails>
 }

@@ -40,19 +40,28 @@ abstract class HangarAuthService : BuildService<BuildServiceParameters.None> {
     private val cache: MutableMap<String, HangarAuthorizationToken> = HashMap()
 
     @Synchronized
-    fun jwt(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken {
+    fun jwt(
+        client: HttpClient,
+        apiEndpoint: String,
+        apiKey: String,
+    ): HangarAuthorizationToken {
         val key = "$apiEndpoint:$apiKey"
         val get = cache[key]
         if (get != null && !get.shouldRenew()) {
             return get
         }
-        val fetch = fetchJwt(client, apiEndpoint, apiKey)
-            ?: throw GradleException("Error getting JWT")
+        val fetch =
+            fetchJwt(client, apiEndpoint, apiKey)
+                ?: throw GradleException("Error getting JWT")
         cache[key] = fetch
         return fetch
     }
 
-    private fun fetchJwt(client: HttpClient, apiEndpoint: String, apiKey: String): HangarAuthorizationToken? {
+    private fun fetchJwt(
+        client: HttpClient,
+        apiEndpoint: String,
+        apiKey: String,
+    ): HangarAuthorizationToken? {
         val post = HttpPost(apiEndpoint + "authenticate?apiKey=" + apiKey)
         return client.execute(post, ::handleResponse)
     }

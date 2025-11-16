@@ -26,48 +26,66 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.register
 import javax.inject.Inject
 
-abstract class PlatformDependencyContainerImpl @Inject constructor(
-    override val backingContainer: PolymorphicDomainObjectContainer<DependencyDetails>,
-    private val providers: ProviderFactory
-) : PlatformDependencyContainer,
-    PolymorphicDomainObjectContainer<DependencyDetails> by backingContainer {
-    override fun url(name: String, url: String): NamedDomainObjectProvider<DependencyDetails.Url> =
-        url(name, url) {}
+abstract class PlatformDependencyContainerImpl
+    @Inject
+    constructor(
+        override val backingContainer: PolymorphicDomainObjectContainer<DependencyDetails>,
+        private val providers: ProviderFactory,
+    ) : PlatformDependencyContainer,
+        PolymorphicDomainObjectContainer<DependencyDetails> by backingContainer {
+        override fun url(
+            name: String,
+            url: String,
+        ): NamedDomainObjectProvider<DependencyDetails.Url> = url(name, url) {}
 
-    override fun url(name: String, url: String, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        url(name, providers.provider { url }, op)
+        override fun url(
+            name: String,
+            url: String,
+            op: Action<DependencyDetails.Url>,
+        ): NamedDomainObjectProvider<DependencyDetails.Url> = url(name, providers.provider { url }, op)
 
-    override fun url(name: String, url: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        url(name, url) {}
+        override fun url(
+            name: String,
+            url: Provider<String>,
+        ): NamedDomainObjectProvider<DependencyDetails.Url> = url(name, url) {}
 
-    override fun url(name: String, url: Provider<String>, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url> =
-        register<DependencyDetails.Url>(name) {
-            this.url.set(url)
-            this.url.disallowChanges()
-            op.execute(this)
+        override fun url(
+            name: String,
+            url: Provider<String>,
+            op: Action<DependencyDetails.Url>,
+        ): NamedDomainObjectProvider<DependencyDetails.Url> =
+            register<DependencyDetails.Url>(name) {
+                this.url.set(url)
+                this.url.disallowChanges()
+                op.execute(this)
+            }
+
+        override fun hangar(id: String): NamedDomainObjectProvider<DependencyDetails.Hangar> = hangar(id) {}
+
+        override fun hangar(
+            id: String,
+            op: Action<DependencyDetails.Hangar>,
+        ): NamedDomainObjectProvider<DependencyDetails.Hangar> = hangar(providers.provider { id }, op)
+
+        override fun hangar(id: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> = hangar(id) {}
+
+        override fun hangar(
+            id: Provider<String>,
+            op: Action<DependencyDetails.Hangar>,
+        ): NamedDomainObjectProvider<DependencyDetails.Hangar> =
+            register<DependencyDetails.Hangar>(dummyDependencyName()) {
+                this.id.set(id)
+                this.id.disallowChanges()
+                op.execute(this)
+            }
+
+        private fun dummyDependencyName(): String {
+            val prefix = "hangarManagedDependency"
+            val existingOfType =
+                names
+                    .filter {
+                        it.startsWith(prefix) && it.substringAfter(prefix).toIntOrNull() != null
+                    }.size
+            return prefix + existingOfType
         }
-
-    override fun hangar(id: String): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(id) {}
-
-    override fun hangar(id: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(providers.provider { id }, op)
-
-    override fun hangar(id: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        hangar(id) {}
-
-    override fun hangar(id: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar> =
-        register<DependencyDetails.Hangar>(dummyDependencyName()) {
-            this.id.set(id)
-            this.id.disallowChanges()
-            op.execute(this)
-        }
-
-    private fun dummyDependencyName(): String {
-        val prefix = "hangarManagedDependency"
-        val existingOfType = names.filter {
-            it.startsWith(prefix) && it.substringAfter(prefix).toIntOrNull() != null
-        }.size
-        return prefix + existingOfType
     }
-}

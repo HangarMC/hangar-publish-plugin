@@ -25,16 +25,15 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import javax.inject.Inject
 
-abstract class PlatformContainerImpl @Inject constructor(
-    override val backingContainer: NamedDomainObjectContainer<PlatformDetails>
-) : PlatformContainer,
-    NamedDomainObjectContainer<PlatformDetails> by backingContainer {
-    override fun paper(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> =
-        maybeRegister(Platforms.PAPER, op)
+abstract class PlatformContainerImpl
+    @Inject
+    constructor(
+        override val backingContainer: NamedDomainObjectContainer<PlatformDetails>,
+    ) : PlatformContainer,
+        NamedDomainObjectContainer<PlatformDetails> by backingContainer {
+        override fun paper(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> = maybeRegister(Platforms.PAPER, op)
 
-    override fun velocity(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> =
-        maybeRegister(Platforms.VELOCITY, op)
+        override fun velocity(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> = maybeRegister(Platforms.VELOCITY, op)
 
-    override fun waterfall(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> =
-        maybeRegister(Platforms.WATERFALL, op)
-}
+        override fun waterfall(op: Action<PlatformDetails>): NamedDomainObjectProvider<PlatformDetails> = maybeRegister(Platforms.WATERFALL, op)
+    }

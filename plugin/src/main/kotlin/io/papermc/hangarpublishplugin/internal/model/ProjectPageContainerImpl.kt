@@ -23,21 +23,25 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.provider.Provider
 import javax.inject.Inject
 
-abstract class ProjectPageContainerImpl @Inject constructor(
-    override val backingContainer: NamedDomainObjectContainer<ProjectPage>
-) : ProjectPageContainer,
-    NamedDomainObjectContainer<ProjectPage> by backingContainer {
-    companion object {
-        const val RESOURCE_PAGE_ID = "MainResourcePage"
-    }
+abstract class ProjectPageContainerImpl
+    @Inject
+    constructor(
+        override val backingContainer: NamedDomainObjectContainer<ProjectPage>,
+    ) : ProjectPageContainer,
+        NamedDomainObjectContainer<ProjectPage> by backingContainer {
+        companion object {
+            const val RESOURCE_PAGE_ID = "MainResourcePage"
+        }
 
-    override fun resourcePage(content: String): NamedDomainObjectProvider<ProjectPage> = register(RESOURCE_PAGE_ID) {
-        this.content.set(content)
-    }
+        override fun resourcePage(content: String): NamedDomainObjectProvider<ProjectPage> =
+            register(RESOURCE_PAGE_ID) {
+                this.content.set(content)
+            }
 
-    override fun resourcePage(content: Provider<String>): NamedDomainObjectProvider<ProjectPage> = register(RESOURCE_PAGE_ID) {
-        this.content.set(content)
-    }
+        override fun resourcePage(content: Provider<String>): NamedDomainObjectProvider<ProjectPage> =
+            register(RESOURCE_PAGE_ID) {
+                this.content.set(content)
+            }
 
-    override fun resourcePage(): NamedDomainObjectProvider<ProjectPage> = named(RESOURCE_PAGE_ID)
-}
+        override fun resourcePage(): NamedDomainObjectProvider<ProjectPage> = named(RESOURCE_PAGE_ID)
+    }

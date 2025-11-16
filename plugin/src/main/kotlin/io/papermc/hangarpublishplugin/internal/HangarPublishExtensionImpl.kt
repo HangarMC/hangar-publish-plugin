@@ -23,10 +23,12 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
 import javax.inject.Inject
 
-abstract class HangarPublishExtensionImpl @Inject constructor(
-    objects: ObjectFactory
-) : HangarPublishExtension {
-    @Suppress("unchecked_cast") // GH:gradle/gradle#23655
-    override val publications: NamedDomainObjectContainer<HangarPublication> =
-        objects.domainObjectContainer(HangarPublicationImpl::class.java) as NamedDomainObjectContainer<HangarPublication>
-}
+abstract class HangarPublishExtensionImpl
+    @Inject
+    constructor(
+        objects: ObjectFactory,
+    ) : HangarPublishExtension {
+        @Suppress("unchecked_cast") // GH:gradle/gradle#23655
+        override val publications: NamedDomainObjectContainer<HangarPublication> =
+            objects.domainObjectContainer(HangarPublicationImpl::class.java) as NamedDomainObjectContainer<HangarPublication>
+    }

@@ -21,7 +21,9 @@ import org.gradle.api.PolymorphicDomainObjectContainer
 /**
  * Delegating [PolymorphicDomainObjectContainer].
  */
-interface DelegatingPolymorphicDomainObjectContainer<T> : DelegatingNamedDomainObjectContainer<T>, PolymorphicDomainObjectContainer<T> {
+interface DelegatingPolymorphicDomainObjectContainer<T : Any> :
+    DelegatingNamedDomainObjectContainer<T>,
+    PolymorphicDomainObjectContainer<T> {
     /**
      * The backing [PolymorphicDomainObjectContainer] wrapped by this [DelegatingPolymorphicDomainObjectContainer].
      *

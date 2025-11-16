@@ -36,7 +36,10 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param url dependency URL
      * @return registration provider
      */
-    fun url(name: String, url: String): NamedDomainObjectProvider<DependencyDetails.Url>
+    fun url(
+        name: String,
+        url: String,
+    ): NamedDomainObjectProvider<DependencyDetails.Url>
 
     /**
      * Registers a [DependencyDetails.Url], configuring it with the provided action.
@@ -46,7 +49,11 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param op configuration action
      * @return registration provider
      */
-    fun url(name: String, url: String, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url>
+    fun url(
+        name: String,
+        url: String,
+        op: Action<DependencyDetails.Url>,
+    ): NamedDomainObjectProvider<DependencyDetails.Url>
 
     /**
      * Registers a [DependencyDetails.Url] without any extra configuration.
@@ -55,7 +62,10 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param url dependency URL
      * @return registration provider
      */
-    fun url(name: String, url: Provider<String>): NamedDomainObjectProvider<DependencyDetails.Url>
+    fun url(
+        name: String,
+        url: Provider<String>,
+    ): NamedDomainObjectProvider<DependencyDetails.Url>
 
     /**
      * Registers a [DependencyDetails.Url], configuring it with the provided action.
@@ -65,7 +75,11 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param op configuration action
      * @return registration provider
      */
-    fun url(name: String, url: Provider<String>, op: Action<DependencyDetails.Url>): NamedDomainObjectProvider<DependencyDetails.Url>
+    fun url(
+        name: String,
+        url: Provider<String>,
+        op: Action<DependencyDetails.Url>,
+    ): NamedDomainObjectProvider<DependencyDetails.Url>
 
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
@@ -82,7 +96,10 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(id: String, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(
+        id: String,
+        op: Action<DependencyDetails.Hangar>,
+    ): NamedDomainObjectProvider<DependencyDetails.Hangar>
 
     /**
      * Registers a [DependencyDetails.Hangar] without any extra configuration.
@@ -99,5 +116,8 @@ interface PlatformDependencyContainer : DelegatingPolymorphicDomainObjectContain
      * @param op configuration action
      * @return registration provider
      */
-    fun hangar(id: Provider<String>, op: Action<DependencyDetails.Hangar>): NamedDomainObjectProvider<DependencyDetails.Hangar>
+    fun hangar(
+        id: Provider<String>,
+        op: Action<DependencyDetails.Hangar>,
+    ): NamedDomainObjectProvider<DependencyDetails.Hangar>
 }
