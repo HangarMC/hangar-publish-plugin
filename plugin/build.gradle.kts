@@ -8,7 +8,7 @@ plugins {
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "2.1.1"
     id("net.kyori.indra.licenser.spotless") version "4.0.0"
-    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
 
 group = "io.papermc"
