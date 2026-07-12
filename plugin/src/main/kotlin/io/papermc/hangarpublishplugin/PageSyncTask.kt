@@ -61,11 +61,9 @@ abstract class PageSyncTask : DefaultTask() {
         }
         send(this.auth.get(), this.apiEndpoint.get(), methodEndpoint, this.apiKey.get(), ::HttpPatch) { entity ->
             val body = JsonObject()
-            if (isMainPage) {
-                body.addProperty("content", content)
-            } else {
+            body.addProperty("content", content)
+            if (!isMainPage) {
                 body.addProperty("path", page.name)
-                body.addProperty("content", content)
             }
             entity.addBody(body)
         }
