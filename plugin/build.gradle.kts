@@ -28,7 +28,7 @@ tasks.register("format") {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.google.code.gson:gson:2.14.0")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
 }
 
