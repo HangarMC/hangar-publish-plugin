@@ -1,9 +1,12 @@
+import org.gradle.api.attributes.plugin.GradlePluginApiVersion
+import org.gradle.plugin.compatibility.compatibility
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.1.1"
     id("net.kyori.indra.licenser.spotless") version "4.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
 }
@@ -25,46 +28,48 @@ tasks.register("format") {
 }
 
 dependencies {
-    implementation("com.google.code.gson", "gson", "2.13.2")
-    implementation("org.apache.httpcomponents.client5", "httpclient5", "5.5.1")
+    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
 }
 
 testing {
     suites {
         // Configure the built-in test suite
-        val test by getting(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
-            useKotlinTest(embeddedKotlinVersion)
+        val test =
+            getByName<JvmTestSuite>("test") {
+                // Use Kotlin Test test framework
+                useKotlinTest(embeddedKotlinVersion)
 
-            dependencies {
-                // Use newer version of JUnit Engine for Kotlin Test
-                implementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+                dependencies {
+                    // Use newer version of JUnit Engine for Kotlin Test
+                    implementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+                }
             }
-        }
 
         // Create a new test suite
-        val functionalTest by registering(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
-            useKotlinTest(embeddedKotlinVersion)
+        val functionalTest =
+            register<JvmTestSuite>("functionalTest") {
+                // Use Kotlin Test test framework
+                useKotlinTest(embeddedKotlinVersion)
 
-            dependencies {
-                // functionalTest test suite depends on the production code in tests
-                implementation(project())
+                dependencies {
+                    // functionalTest test suite depends on the production code in tests
+                    implementation(project())
 
-                // Use newer version of JUnit Engine for Kotlin Test
-                implementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
-            }
+                    // Use newer version of JUnit Engine for Kotlin Test
+                    implementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+                }
 
-            targets {
-                all {
-                    // This test suite should run after the built-in test suite has run its tests
-                    testTask.configure {
-                        shouldRunAfter(test)
-                        failOnNoDiscoveredTests = false
+                targets {
+                    all {
+                        // This test suite should run after the built-in test suite has run its tests
+                        testTask.configure {
+                            shouldRunAfter(test)
+                            failOnNoDiscoveredTests = false
+                        }
                     }
                 }
             }
-        }
     }
 }
 
@@ -77,12 +82,19 @@ publishing.repositories.maven("https://artifactory.papermc.io/artifactory/snapsh
 gradlePlugin {
     website = "https://github.com/HangarMC/hangar-publish-plugin"
     vcsUrl = "https://github.com/HangarMC/hangar-publish-plugin"
-    plugins.create("hangar-publish-plugin") {
-        id = "io.papermc.hangar-publish-plugin"
-        displayName = "Hangar Publish Plugin"
-        description = "Gradle plugin for publishing artifacts to Hangar"
-        tags = listOf("hangar", "publishing", "minecraft")
-        implementationClass = "io.papermc.hangarpublishplugin.HangarPublishPlugin"
+    plugins {
+        create("hangar-publish-plugin") {
+            id = "io.papermc.hangar-publish-plugin"
+            displayName = "Hangar Publish Plugin"
+            description = "Gradle plugin for publishing artifacts to Hangar"
+            tags = listOf("hangar", "publishing", "minecraft")
+            implementationClass = "io.papermc.hangarpublishplugin.HangarPublishPlugin"
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
+        }
     }
 }
 
@@ -108,4 +120,8 @@ kotlin {
         jvmTarget = JvmTarget.JVM_17
         freeCompilerArgs.add("-Xjdk-release=17")
     }
+}
+
+configurations.runtimeElements {
+    attributes.attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE, objects.named(GradleVersion.current().version))
 }
