@@ -51,11 +51,16 @@ abstract class PageSyncTask : DefaultTask() {
     fun run() {
         val page = this.page.get()
         val content = page.content.get()
-        val methodEndpoint = "pages/edit/${this.id.get()}"
+        val isMainPage = page.name == ProjectPageContainerImpl.RESOURCE_PAGE_ID
+        // `editmain` edits the project's main/home page (takes {"content": ...})
+        // `edit` edits sub-pages (takes {"path": name, "content": ...})
+        val methodEndpoint = if (isMainPage) "pages/editmain/${this.id.get()}" else "pages/edit/${this.id.get()}"
         send(this.auth.get(), this.apiEndpoint.get(), methodEndpoint, this.apiKey.get(), ::HttpPatch) { entity ->
             val body = JsonObject()
-            body.addProperty("path", page.name.takeIf { it != ProjectPageContainerImpl.RESOURCE_PAGE_ID } ?: "")
             body.addProperty("content", content)
+            if (!isMainPage) {
+                body.addProperty("path", page.name)
+            }
             entity.addBody(body)
         }
     }

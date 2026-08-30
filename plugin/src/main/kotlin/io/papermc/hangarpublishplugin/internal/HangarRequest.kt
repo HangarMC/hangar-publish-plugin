@@ -22,6 +22,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.io.entity.StringEntity
+import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.nio.charset.StandardCharsets
 
@@ -44,7 +45,9 @@ fun <T : ClassicHttpRequest> send(
         entityDecorator(entity)
         client.execute(entity) { response ->
             if (response.code != 200) {
-                logger.error("Error using endpoint '{}', returned {}: {}", endpoint, response.code, ErrorResponseParser.parse(response))
+                val errorBody = ErrorResponseParser.parse(response)
+                logger.error("Error using endpoint '{}', returned {}: {}", endpoint, response.code, errorBody)
+                throw GradleException("Hangar API request to '$endpoint' failed with status ${response.code}: $errorBody")
             }
         }
     }
