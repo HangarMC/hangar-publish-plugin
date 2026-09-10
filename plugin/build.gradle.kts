@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
-    id("com.gradle.plugin-publish") version "2.1.1"
+    id("com.gradle.plugin-publish") version "2.2.1"
     id("net.kyori.indra.licenser.spotless") version "4.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
